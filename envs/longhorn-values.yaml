@@ -1,0 +1,4 @@
+    defaultSettings:
+      defaultReplicaCount: 3
+      defaultDataLocality: "best-effort"
+

@@ -1,0 +1,5 @@
+    installCRDs: true
+    prometheus:
+      # set to true if you want to enable prometheus monitoring for cert-manager
+      enabled: false
+

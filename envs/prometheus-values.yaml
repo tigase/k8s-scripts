@@ -1,0 +1,49 @@
+    alertmanager:
+      enabled: true
+    defaultRules:
+      create: true
+      rules:
+        etcd: false
+        kubeScheduler: false
+    grafana:
+      enabled: true
+    kubeEtcd:
+      enabled: false
+    kubeScheduler:
+      enabled: false
+    prometheus:
+      enabled: true
+      additionalServiceMonitors:
+        - name: "loki-monitor"
+          selector:
+            matchLabels:
+              app: loki
+              release: loki
+          namespaceSelector:
+            matchNames:
+              - monitoring
+          endpoints:
+            - port: "http-metrics"
+        - name: "promtail-monitor"
+          selector:
+            matchLabels:
+              app: promtail
+              release: loki
+          namespaceSelector:
+            matchNames:
+              - monitoring
+          endpoints:
+            - port: "http-metrics"
+      prometheusSpec:
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 5Gi
+              storageClassName: longhorn
+    prometheusOperator:
+      enabled: true
+
