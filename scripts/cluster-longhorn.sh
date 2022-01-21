@@ -28,9 +28,9 @@ update_k8s_secrets "longhorn-user" ${USER_NAME}
 update_k8s_secrets "longhorn-pass" ${USER_PASS}
 
 SEALED_SECRETS_PUB_KEY="pub-sealed-secrets-${CLUSTER_NAME}.pem"
-source ${HOME}/.oci/k8stests-secrets-keys || exit 1
-S3_SECRET_KEY="${secret_key}"
-S3_ACCESS_KEY="${access_key}"
+#source ${HOME}/.oci/k8stests-secrets-keys || exit 1
+#S3_SECRET_KEY="${secret_key}"
+#S3_ACCESS_KEY="${access_key}"
 
 cd ${CLUSTER_REPO_DIR}
 
@@ -38,16 +38,16 @@ CL_DIR=`mkdir_ns ${BASE_DIR} ${TNS} ${FLUX_NS}`
 
 mkdir -p "${CL_DIR}/${NAME}"
 
-kubectl create secret generic "s3-secrets" \
-    --namespace "${LH_TARGET_NAMESPACE}" \
-    --from-literal=AWS_ACCESS_KEY_ID="${S3_ACCESS_KEY}" \
-    --from-literal=AWS_SECRET_ACCESS_KEY="${S3_SECRET_KEY}" \
-    --dry-run=client -o yaml | kubeseal --cert="${SEALED_SECRETS_PUB_KEY}" \
-    --format=yaml > "${CL_DIR}/${NAME}/s3-secrets-sealed.yaml"
+#kubectl create secret generic "s3-secrets" \
+#    --namespace "${LH_TARGET_NAMESPACE}" \
+#    --from-literal=AWS_ACCESS_KEY_ID="${S3_ACCESS_KEY}" \
+#    --from-literal=AWS_SECRET_ACCESS_KEY="${S3_SECRET_KEY}" \
+#    --dry-run=client -o yaml | kubeseal --cert="${SEALED_SECRETS_PUB_KEY}" \
+#    --format=yaml > "${CL_DIR}/${NAME}/s3-secrets-sealed.yaml"
 
 
 echo "Deploying ${NAME}"
-~/scripts/flux-create-helmrel.sh \
+${SCRIPTS}/flux-create-helmrel.sh \
         "${LH_NAME}" \
         "${LH_VER}" \
         "${LH_RNAME}" \

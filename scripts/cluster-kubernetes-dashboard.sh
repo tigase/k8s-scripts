@@ -40,7 +40,7 @@ subjects:
 EOF
 
 echo "Deploying ${NAME}"
-~/scripts/flux-create-helmrel.sh \
+${SCRIPTS}/flux-create-helmrel.sh \
         "${DA_NAME}" \
         "${DA_VER}" \
         "${DA_RNAME}" \

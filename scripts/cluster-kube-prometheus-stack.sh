@@ -31,7 +31,7 @@ kubectl create secret generic "prometheus-stack-credentials" \
     --format=yaml > "${CL_DIR}/${NAME}/prometheus-stack-credentials-sealed.yaml"
 
 echo "Deploying ${NAME}"
-~/scripts/flux-create-helmrel.sh \
+${SCRIPTS}/flux-create-helmrel.sh \
         "${PM_NAME}" \
         "${PM_VER}" \
         "${PM_RNAME}" \

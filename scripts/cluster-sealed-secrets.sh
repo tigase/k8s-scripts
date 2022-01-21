@@ -11,7 +11,7 @@ source ${SCRIPTS}/cluster-tools.sh || exit 1
 cd ${CLUSTER_REPO_DIR}
 
 echo "Deploying sealed secrets"
-~/scripts/flux-create-helmrel.sh \
+${SCRIPTS}/flux-create-helmrel.sh \
         "${SS_NAME}" \
         "${SS_VER}" \
         "${SS_RNAME}" \

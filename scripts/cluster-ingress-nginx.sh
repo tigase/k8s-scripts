@@ -15,7 +15,7 @@ cd ${CLUSTER_REPO_DIR}
 CL_DIR=`mkdir_ns ${BASE_DIR} ${TNS} ${FLUX_NS}`
 
 echo "Deploying ${NAME}"
-~/scripts/flux-create-helmrel.sh \
+${SCRIPTS}/flux-create-helmrel.sh \
         "${IN_NAME}" \
         "${IN_VER}" \
         "${IN_RNAME}" \
