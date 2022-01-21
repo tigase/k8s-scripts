@@ -19,7 +19,7 @@ Requirements
 
 Initial setup:
 
-1. Copy entire `envs` folder to ${HOME/envs
+1. Copy entire `envs` folder to ${HOME}/envs: ```cp -rv envs ${HOME}/```
 2. Edit `cluster.env` file. Typically cluster name and github credentials must be provided. The rest can be left to defaults.
 
 Usage:
