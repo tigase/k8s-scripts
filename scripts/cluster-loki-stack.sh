@@ -3,18 +3,16 @@
 # Script deploys loki for collecting logs from k8s services
 # 
 
-source ~/envs/cluster.env || exit 1
-source ~/envs/versions.env || exit 1
-source ${SCRIPTS}/cluster-tools.sh || exit 1
+source `dirname "$0"`/scripts-env-init.sh
 
 NAME="${LO_NAME}"
 TNS="${LO_TARGET_NAMESPACE}"
 
-cd ${CLUSTER_REPO_DIR}
+cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "${ERROR}No cluster repo dir!${NORMAL}"; exit 1; }
 
 CL_DIR=`mkdir_ns ${BASE_DIR} ${TNS} ${FLUX_NS}`
 
-echo "Deploying ${NAME}"
+echo "   ${BOLD}Deploying ${NAME}${NORMAL}"
 ${SCRIPTS}/flux-create-helmrel.sh \
         "${LO_NAME}" \
         "${LO_VER}" \

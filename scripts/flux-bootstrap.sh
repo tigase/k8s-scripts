@@ -7,8 +7,8 @@
 source `dirname "$0"`/scripts-env-init.sh
 
 [[ -d ${CLUSTER_REPO_DIR} ]] && {
-  echo "Local folder the cluster repository already exist: ${CLUSTER_REPO_DIR}"
-  echo "Cleanup first and then rerun the script"
+  echo "${ERROR}Local folder the cluster repository already exist: ${CLUSTER_REPO_DIR}${NORMAL}"
+  echo "${ERROR}Cleanup first and then rerun the script${NORMAL}"
   exit 1
 }
 
@@ -20,8 +20,16 @@ flux bootstrap github \
   --token-auth \
   --personal
 
-cd ${PROJECTS_DIR}
+if [ ! -d  "$PROJECTS_DIR" ]; then
+  mkdir "$PROJECTS_DIR"
+fi
+
+cd ${PROJECTS_DIR} &> /dev/null || { echo "No projects dir!"; exit 1; }
 git clone "https://github.com/$GITHUB_USER/$CLUSTER_REPO"
+if [ ! -d  "$CLUSTER_REPO" ]; then
+  echo "${ERROR}Failed to clone cluster repository $CLUSTER_REPO to $CLUSTER_REPO_DIR!${NORMAL}"
+  exit 1;
+fi
 cd $CLUSTER_REPO
 
 FILE="./clusters/${CLUSTER_NAME}/${BASE}.yaml"

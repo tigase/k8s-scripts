@@ -4,17 +4,15 @@
 # generate certificates for requested services
 #
 
-source ~/envs/cluster.env || exit 1
-source ~/envs/versions.env || exit 1
-source ${SCRIPTS}/cluster-tools.sh || exit 1
+source `dirname "$0"`/scripts-env-init.sh
 
 NAME="${CM_NAME}"
 TNS="${CM_TARGET_NAMESPACE}"
-cd ${CLUSTER_REPO_DIR}
+cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "No cluster repo dir!"; exit 1; }
 
 CL_DIR=`mkdir_ns ${BASE_DIR} ${TNS} ${FLUX_NS}`
 
-echo "Deploying ${NAME}"
+echo "   ${BOLD}Deploying ${NAME}${NORMAL}"
 ${SCRIPTS}/flux-create-helmrel.sh \
         "${CM_NAME}" \
         "${CM_VER}" \

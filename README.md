@@ -19,8 +19,9 @@ Requirements
 
 Initial setup:
 
-1. Copy entire `envs` folder to ${HOME}/envs: ```cp -rv envs ${HOME}/```
-2. Edit `cluster.env` file. Typically cluster name and github credentials must be provided. The rest can be left to defaults.
+1. Create config file for configuration settings and backup, ie. ```mkdir ~/.tigase-flux```. If you wish to put config in a different location, set `TIG_CLUSTER_HOME` variable to point to this location. This will be used as `CONFIG` variable.
+2. Copy entire `envs` folder to ${CONFIG}/envs: ```cp -rv envs ${CONFIG}/```
+3. Edit `cluster.env` file. Typically cluster name and github credentials must be provided. The rest can be left to defaults.
 
 Usage:
 

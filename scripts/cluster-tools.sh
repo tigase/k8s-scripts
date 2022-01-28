@@ -10,11 +10,11 @@
 wait_for_ready() {
   WAIT=20
   [[ -z "$1" ]] || { WAIT=$1; }
-  echo "Waiting for the system to be ready"
+  echo "${CYAN}Waiting for the system to be ready${NORMAL}"
   sleep ${WAIT}
   while flux get all -A | grep -q Unknown ; do 
-    date 
-    echo "System not ready yet, waiting ${WAIT}"
+    DATE=`date "+%Y-%m-%d %H:%M:%S"`
+    echo "${CYAN}${BOLD}${DATE} System not ready yet, waiting ${WAIT}${NORMAL}"
     sleep ${WAIT}
   done
 }
@@ -61,8 +61,7 @@ update_repo() {
   git add -A
   git commit -am "${1} deployment"
   git push
-#  flux reconcile source git "${FLUX_NS}"
-  echo "Repo update!"
+  flux reconcile source git "${FLUX_NS}"
 }
 
 # Function updates given yaml file to add 'flux-system' namespace

@@ -13,14 +13,40 @@ else
 	export CONFIG="$TIG_CLUSTER_HOME"
 fi
 
-[ ! -d "$CONFIG" ] && mkdir $CONFIG
+if [ ! -d "$CONFIG" ]; then
+	echo "Config directory $CONFIG does not exist!";
+	exit 1;
+fi
+
+export TMP_DIR="$CONFIG/tmp"
+
+[ ! -d "$TMP_DIR" ] && mkdir $TMP_DIR
 
 SCRIPT_DIR=`realpath "$0"`
 export SCRIPTS=`dirname "$SCRIPT_DIR"`
-#`pwd`/`dirname "$0"`
 
-echo "Using config from $CONFIG and scripts from $SCRIPTS";
+if [ ! -d "$CONFIG/envs" ]; then
+	echo "Environment directory $CONFIG/envs does not exist!";
+	exit 1;
+fi
 
 source "${CONFIG}/envs/cluster.env" || { echo "No cluster.env file"; exit 1; }
-source "${CONFIG}/envs/versions.env" || { echo "No versions.env file"; exit 1; }
+
+if [ "$COLORED_OUTPUT" = true ]; then
+	export BOLD="$(tput bold)"
+	export RED="$(tput setaf 1)"
+	export GREEN="$(tput setaf 2)"
+	export NORMAL="$(tput sgr0)"
+	export CYAN="$(tput setaf 6)"
+else
+	export BOLD=""
+	export RED=""
+	export GREEN=""
+	export NORMAL=""
+	export CYAN=""
+fi
+export ERROR="$BOLD$RED"
+
+source "${CONFIG}/envs/versions.env" || { echo "${ERROR}No versions.env file${NORMAL}"; exit 1; }
 source "${SCRIPTS}/cluster-tools.sh" || exit 1
+

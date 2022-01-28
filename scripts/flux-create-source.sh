@@ -3,14 +3,14 @@
 # Script adds a new helm source to the FluxCD repository
 #
 
-source ~/envs/cluster.env || exit 1
+source `dirname "$0"`/scripts-env-init.sh
 
 INTERVAL="${DEF_INTERVAL}"
 NAME=""
 URL=""
 DIR="${BASE_DIR}/sources"
 
-[[ -z "$1" ]] && { echo "Missing name argument"; } || { NAME="$1"; }
+[[ -z "$1" ]] && { echo "${ERROR}Missing name argument${NORMAL}"; } || { NAME="$1"; }
 
 [[ -z "$1" || "$1" == "-h" ]] && {
   echo "\$1 - name"
@@ -18,7 +18,7 @@ DIR="${BASE_DIR}/sources"
   exit 0
 }
 
-[[ -z "$2" ]] && { echo "Missing url argument"; exit 1; } || {
+[[ -z "$2" ]] && { echo "${ERROR}Missing url argument${NORMAL}"; exit 1; } || {
   URL="$2"
 }
 

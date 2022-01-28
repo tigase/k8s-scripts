@@ -6,9 +6,7 @@
 # otherwise the script asks to enter admin password from commandline
 #
 
-source ~/envs/cluster.env || exit 1
-source ~/envs/versions.env || exit 1
-source ${SCRIPTS}/cluster-tools.sh || exit 1
+source `dirname "$0"`/scripts-env-init.sh
 
 NAME="${PM_NAME}"
 TNS=${PM_TARGET_NAMESPACE}
@@ -19,7 +17,7 @@ GRAFANA_ADMIN_PASSWORD=`gen_token 32`
   [[ -z ${gr_adm_pass} ]] || GRAFANA_ADMIN_PASSWORD==${gr_adm_pass}
 }
 
-cd ${CLUSTER_REPO_DIR}
+cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "${ERROR}No cluster repo dir!${NORMAL}"; exit 1; }
 
 CL_DIR=`mkdir_ns ${BASE_DIR} ${TNS} ${FLUX_NS}`
 
@@ -30,7 +28,7 @@ kubectl create secret generic "prometheus-stack-credentials" \
     --dry-run=client -o yaml | kubeseal --cert="${SEALED_SECRETS_PUB_KEY}" \
     --format=yaml > "${CL_DIR}/${NAME}/prometheus-stack-credentials-sealed.yaml"
 
-echo "Deploying ${NAME}"
+echo "   ${BOLD}Deploying ${NAME}${NORMAL}"
 ${SCRIPTS}/flux-create-helmrel.sh \
         "${PM_NAME}" \
         "${PM_VER}" \

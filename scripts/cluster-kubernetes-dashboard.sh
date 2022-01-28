@@ -4,15 +4,13 @@
 # in a local FS file
 #
 
-source ~/envs/cluster.env || exit 1
-source ~/envs/versions.env || exit 1
-source ${SCRIPTS}/cluster-tools.sh || exit 1
+source `dirname "$0"`/scripts-env-init.sh
 
 NAME=${DA_NAME}
 TNS=${DA_TARGET_NAMESPACE}
 DA_USER="dashboard-admin"
 
-cd ${CLUSTER_REPO_DIR}
+cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "${ERROR}No cluster repo dir!${NORMAL}"; exit 1; }
 
 CL_DIR=`mkdir_ns ${BASE_DIR} ${TNS} ${FLUX_NS}`
 
@@ -39,7 +37,7 @@ subjects:
     namespace: ${DA_TARGET_NAMESPACE}
 EOF
 
-echo "Deploying ${NAME}"
+echo "   ${BOLD}Deploying ${NAME}${NORMAL}"
 ${SCRIPTS}/flux-create-helmrel.sh \
         "${DA_NAME}" \
         "${DA_VER}" \

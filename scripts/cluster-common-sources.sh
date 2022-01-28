@@ -4,10 +4,9 @@
 # services being installed on the cluster
 #
 
-source ~/envs/cluster.env || { echo "No cluster.env file"; exit 1; }
-source ~/envs/versions.env || { echo "No versions.env file"; exit 1; }
+source `dirname "$0"`/scripts-env-init.sh
 
-cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "No cluster repo dir!"; exit 1; }
+cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "${ERROR}No cluster repo dir!${NORMAL}"; exit 1; }
 
 SOURCES=(
 	"${SS_S_NAME}:${SS_URL}"
@@ -23,14 +22,14 @@ SOURCES=(
 add_source() {
   name=${1%%:*}
   url=${1#*:}
-  echo "Adding ${name} source at ${url}"
+  echo "      ${BOLD}Adding ${name} source at ${url}${NORMAL}"
   ${SCRIPTS}/flux-create-source.sh ${name} ${url}
   git add -A
   git commit -am "Added ${name} source"
 }
 
 
-echo -e "\n\n   Adding common sources"
+echo -e "\n\n   ${BOLD}Adding common sources${NORMAL}"
 
 for src in "${SOURCES[@]}" ; do
   add_source ${src}

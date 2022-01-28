@@ -4,7 +4,7 @@
 # kustomization metadata
 #
 
-source ~/envs/cluster.env || exit 1
+source `dirname "$0"`/scripts-env-init.sh
 
 INTERVAL="${DEF_INTERVAL}"
 NAME=""
@@ -17,7 +17,7 @@ TARGET_NAMESPACE="${NAMESPACE}"
 
 ## Check if this is app setup
 [[ "$1" == "app" ]] && { BASE_DIR="${APPS_DIR}"; shift; }
-[[ -z "$1" ]] && { echo "Missing name argument"; } || { NAME="$1"; }
+[[ -z "$1" ]] && { echo "${ERROR}Missing name argument${NORMAL}"; } || { NAME="$1"; }
 
 [[ -z "$1" || "$1" == "-h" ]] && {
   echo "CLUSTER_NAME environment variable must be set"
@@ -32,7 +32,7 @@ TARGET_NAMESPACE="${NAMESPACE}"
   exit 0
 }
 
-[[ -z "${CLUSTER_NAME}" ]] && { echo "CLUSTER_NAME env not set!"; exit 1; }
+[[ -z "${CLUSTER_NAME}" ]] && { echo "{ERROR}CLUSTER_NAME env not set!${NORMAL}"; exit 1; }
 
 REL_NAME="${NAME}"
 SOURCE="HelmRepository/${NAME}"
@@ -41,7 +41,7 @@ CHART="${NAME}"
 shift
 
 #### $2
-[[ -z "$1" ]] && { echo "Missing version argument"; exit 1; } || { VERSION="$1"; shift; }
+[[ -z "$1" ]] && { echo "${ERROR}Missing version argument${NORMAL}"; exit 1; } || { VERSION="$1"; shift; }
 #### $3
 #[[ -z "$1" ]] || { URL="$1"; shift; }
 #### $3
@@ -76,7 +76,7 @@ FILE="${DIR}/${NAME}.yaml"
 ### check if the target file already exists
 
 [[ -f "${FILE}" ]] && {
-  echo "Files are alredy generated, please either edit to update or remove to regenrate:"
+  echo "${ERROR}Files are alredy generated, please either edit to update or remove to regenrate:${NORMAL}"
   echo "  - ${FILE}"
   echo "  - ${DIR}/kustomization.yaml"
   exit 2
@@ -94,7 +94,7 @@ CMD="flux create helmrelease ${NAME} \
 	--chart=${CHART} \
 	--namespace=${NAMESPACE}
 	--target-namespace=${TARGET_NAMESPACE} $*"
-echo -e "${CMD}\n" >> ~/flux-cmds.txt
+echo -e "${CMD}\n" >> $TMP_DIR/flux-cmds.txt
 set -x
 ${CMD} --export > ${FILE}
 set +x
