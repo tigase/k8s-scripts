@@ -47,6 +47,16 @@ else
 fi
 export ERROR="$BOLD$RED"
 
+# Make sure all required executables are installed
+REQUIRED_CMDS="pwgen kubectl flux kustomize git yq"
+
+for CMD in $REQUIRED_CMDS; do
+  if ! command -v "$CMD" &> /dev/null; then
+      echo "${ERROR}$CMD could not be found!${NORMAL}"
+      exit
+  fi
+done
+
 source "${CONFIG}/envs/versions.env" || { echo "${ERROR}No versions.env file${NORMAL}"; exit 1; }
 source "${SCRIPTS}/cluster-tools.sh" || exit 1
 
