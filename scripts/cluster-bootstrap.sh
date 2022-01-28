@@ -7,10 +7,7 @@
 # waits until flux system fully reconcilled after each service is added
 #
 
-
-source ~/envs/cluster.env || exit 1
-source ~/envs/versions.env || exit 1
-source "${SCRIPTS}/cluster-tools.sh" || exit 1
+source `dirname "$0"`/scripts-env-init.sh
 
 ### Versions
 # helm search repo ....
@@ -22,6 +19,10 @@ ${SCRIPTS}/flux-bootstrap.sh || {
 }
 
 wait_for_ready
+
+echo "DONE"
+
+exit 1;
 
 #BASE_TOOLS="common-sources ${SS_NAME} ${DA_NAME} ${IN_NAME} ${CM_NAME} ${LH_NAME} ${PM_NAME} ${LO_NAME} ${VE_NAME}"
 BASE_TOOLS="common-sources ${SS_NAME} ${DA_NAME} ${IN_NAME} ${CM_NAME} ${LH_NAME} ${PM_NAME} ${LO_NAME}"

@@ -61,7 +61,8 @@ update_repo() {
   git add -A
   git commit -am "${1} deployment"
   git push
-  flux reconcile source git "${FLUX_NS}"
+#  flux reconcile source git "${FLUX_NS}"
+  echo "Repo update!"
 }
 
 # Function updates given yaml file to add 'flux-system' namespace
@@ -81,12 +82,12 @@ update_chart_ns() {
 # by scripts using pwgen and stored in the cluster.
 # They have to be then provided to the user/admin to allow him to
 # connect and login to the services.
-# All the secrets are stored in ${HOME}/.kube/k8s-secrets
+# All the secrets are stored in ${CONFIG}/k8s-secrets
 # $1 - mandatory SECRET_NAME name of the secret stored
 # $2 - mandatory SECRET_TOKEN the actual secret stored
 update_k8s_secrets() {
-  echo -n "${1}: " >> ${HOME}/.kube/k8s-secrets
-  echo "${2}" >> ${HOME}/.kube/k8s-secrets
+  echo -n "${1}: " >> ${CONFIG}/k8s-secrets
+  echo "${2}" >> ${CONFIG}/k8s-secrets
 }
 
 # Function generates random and secrure token or password, optionally

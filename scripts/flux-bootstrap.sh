@@ -4,8 +4,7 @@
 # git repo structure and data
 #
 
-source ~/envs/cluster.env || exit 1
-source "${SCRIPTS}/cluster-tools.sh" || exit 1
+source `dirname "$0"`/scripts-env-init.sh
 
 [[ -d ${CLUSTER_REPO_DIR} ]] && {
   echo "Local folder the cluster repository already exist: ${CLUSTER_REPO_DIR}"
