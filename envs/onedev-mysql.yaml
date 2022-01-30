@@ -1,0 +1,10 @@
+    persistentVolume:
+      enabled: true
+    
+    backup: 
+      s3:
+        enabled: false
+    
+    resources:
+      limits:
+        memory: 512Mi

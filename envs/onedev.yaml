@@ -1,0 +1,3 @@
+    onedev:  
+      persistentVolume:
+        enabled: true

@@ -38,14 +38,17 @@ if [ "$COLORED_OUTPUT" = true ]; then
 	export GREEN="$(tput setaf 2)"
 	export NORMAL="$(tput sgr0)"
 	export CYAN="$(tput setaf 6)"
+	export YELLOW="$(tput setaf 3)"
 else
 	export BOLD=""
 	export RED=""
 	export GREEN=""
 	export NORMAL=""
 	export CYAN=""
+	export YELLOW=""
 fi
 export ERROR="$BOLD$RED"
+export WARNING="$BOLD$YELLOW"
 
 # Make sure all required executables are installed
 REQUIRED_CMDS="pwgen kubectl flux kustomize git yq"

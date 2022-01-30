@@ -60,6 +60,10 @@ update_repo ${NAME}
 
 wait_for_ready
 
+echo "      ${WARNING}Making oci storage class non-default${NORMAL}"
+kubectl patch storageclass oci -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+kubectl patch storageclass oci -p '{"metadata": {"annotations":{"storageclass.beta.kubernetes.io/is-default-class":"false"}}}'
+
 AUTH_FILE="$TMP_DIR/auth"
 rm -f $AUTH_FILE
 echo "${USER_NAME}:$(openssl passwd -stdin -apr1 <<< ${USER_PASS})" >> $AUTH_FILE
