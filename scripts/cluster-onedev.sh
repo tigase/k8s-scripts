@@ -54,6 +54,15 @@ ONEDEV_MYSQL_ROOT_PASSWORD=`gen_token 24`
   [[ -z ${u_root_pass} ]] || ONEDEV_MYSQL_ROOT_PASSWORD=${u_root_pass}
 }
 
+if [ "${ONEDEV_MYSQL_S3_BACKUP}" == "true" ]; then
+  if [ -z "${ONEDEV_MYSQL_S3_BACKUP_ACCESS_KEY}" ]; then
+    echo -n "Provide MySQL S3 backup access-key: "; read a_key;
+    echo -n "Provide MySQL S3 backup secret-key: "; read s_key;
+    [[ -z ${a_key} ]] || ONEDEV_MYSQL_BACKUP_S3_ACCESS_KEY=${a_key}
+    [[ -z ${s_key} ]] || ONEDEV_MYSQL_BACKUP_S3_SECRET_KEY=${s_key}
+  fi
+fi
+
 echo "      ${BOLD}Preparing MySQL deployment${NORMAL}"
 
 CL_DIR=`mkdir_ns ${APPS_DIR} ${TNS} ${FLUX_NS}`
@@ -75,8 +84,17 @@ kubectl create secret generic "mysql-credentials" \
     --from-literal=mysql-root-password="${ONEDEV_MYSQL_ROOT_PASSWORD}" \
     --dry-run=client -o yaml | kubeseal --cert="${SEALED_SECRETS_PUB_KEY}" \
     --format=yaml > "${CL_DIR}/${NAME}/onedev-mysql-credentials-sealed.yaml"
+   
+if [ "${ONEDEV_MYSQL_S3_BACKUP}" == "true" ]; then 
+  kubectl create secret generic "mysql-backup-s3" \
+    --namespace "${TNS}" \
+    --from-literal=access-key="${ONEDEV_MYSQL_S3_BACKUP_ACCESS_KEY}" \
+    --from-literal=secret-key="${ONEDEV_MYSQL_S3_BACKUP_SECRET_KEY}" \
+    --dry-run=client -o yaml | kubeseal --cert="${SEALED_SECRETS_PUB_KEY}" \
+    --format=yaml > "${CL_DIR}/${NAME}/onedev-mysql-backup-s3-sealed.yaml"
+fi
 
-VALUES=`cat ${ONEDEV_MYSQL_VALUES_FILE}`
+VALUES=`envsubst < ${ONEDEV_MYSQL_VALUES_FILE}`
     
 cat > "${CL_DIR}/${NAME}/${NAME}.yaml" << EOF
 apiVersion: helm.toolkit.fluxcd.io/v2beta1

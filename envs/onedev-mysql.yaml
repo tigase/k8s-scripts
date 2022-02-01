@@ -3,7 +3,13 @@
     
     backup: 
       s3:
-        enabled: false
+        enabled: ${ONEDEV_MYSQL_S3_BACKUP}
+        schedule: "${ONEDEV_MYSQL_S3_BACKUP_SCHEDULE}"
+        endpoint: "${ONEDEV_MYSQL_S3_BACKUP_ENDPOINT}"
+        bucket: "${ONEDEV_MYSQL_S3_BACKUP_BUCKET}"
+        prefix: "${ONEDEV_MYSQL_S3_BACKUP_PREFIX}"
+        existingSecret: "mysql-backup-s3"
+        expireIn: "${ONEDEV_MYSQL_S3_BACKUP_EXPIRE_IN}"
     
     resources:
       limits:
