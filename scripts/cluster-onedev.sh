@@ -58,8 +58,8 @@ if [ "${ONEDEV_MYSQL_S3_BACKUP}" == "true" ]; then
   if [ -z "${ONEDEV_MYSQL_S3_BACKUP_ACCESS_KEY}" ]; then
     echo -n "Provide MySQL S3 backup access-key: "; read a_key;
     echo -n "Provide MySQL S3 backup secret-key: "; read s_key;
-    [[ -z ${a_key} ]] || ONEDEV_MYSQL_BACKUP_S3_ACCESS_KEY=${a_key}
-    [[ -z ${s_key} ]] || ONEDEV_MYSQL_BACKUP_S3_SECRET_KEY=${s_key}
+    [[ -z ${a_key} ]] || ONEDEV_MYSQL_S3_BACKUP_ACCESS_KEY=${a_key}
+    [[ -z ${s_key} ]] || ONEDEV_MYSQL_S3_BACKUP_SECRET_KEY=${s_key}
   fi
 fi
 
