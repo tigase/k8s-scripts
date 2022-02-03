@@ -12,6 +12,12 @@ cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "${ERROR}No cluster repo dir!${NOR
 
 echo "   ${BOLD}Deploying onedev${NORMAL}"
 
+if [ -z "$ONEDEV_DOMAIN" ]; then
+  echo "   ${ERROR}onedev domain name is not set!${NORMAL}";
+  exit 1;
+fi
+
+
 TNS=${ONEDEV_TARGET_NAMESPACE}
 
 echo "      ${BOLD}Adding tigase helm chart${NORMAL}"
@@ -132,7 +138,7 @@ NAME="${ONEDEV_NAME}"
 
 mkdir -p "${CL_DIR}/${NAME}"
 
-VALUES=`cat ${ONEDEV_VALUES_FILE}`
+VALUES=`envsubst < ${ONEDEV_VALUES_FILE}`
 
 cat > "${CL_DIR}/${NAME}/${NAME}.yaml" << EOF
 apiVersion: helm.toolkit.fluxcd.io/v2beta1

@@ -1,3 +1,18 @@
     onedev:  
       persistentVolume:
         enabled: true
+
+    ingress:
+      annotations:
+        kubernetes.io/ingress.class: nginx
+      enabled: true
+      certificateIssuer: ${SSL_ISSUER}
+      tls:
+        hosts:
+          - ${ONEDEV_DOMAIN}
+          
+      hosts:
+        - host: ${ONEDEV_DOMAIN}
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
