@@ -22,13 +22,6 @@ TNS=${ONEDEV_TARGET_NAMESPACE}
 
 echo "      ${BOLD}Adding tigase helm chart${NORMAL}"
 
-kubectl create secret generic "tigase-git" \
-    --namespace "${FLUX_NS}" \
-    --from-literal=password="${GITHUB_TOKEN}" \
-    --from-literal=username="${GITHUB_USER}" \
-    --dry-run=client -o yaml | kubeseal --cert="${SEALED_SECRETS_PUB_KEY}" \
-    --format=yaml > "${BASE_DIR}/sources/tigase-git-credentials-sealed.yaml"
-
 cat > "${BASE_DIR}/sources/tigase-git.yaml" << EOF
 apiVersion: source.toolkit.fluxcd.io/v1beta1
 kind: GitRepository
@@ -40,8 +33,6 @@ spec:
   url: https://github.com/tigase/helm-charts
   ref:
     branch: master
-  secretRef:
-    name: tigase-git
 EOF
 
 update_kustomization ${BASE_DIR}/sources

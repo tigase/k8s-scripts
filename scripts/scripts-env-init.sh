@@ -63,6 +63,6 @@ done
 source "${CONFIG}/envs/versions.env" || { echo "${ERROR}No versions.env file${NORMAL}"; exit 1; }
 source "${SCRIPTS}/cluster-tools.sh" || exit 1
 
-if [ -z "$SSL_ISSUER"]; then
+if [ -z "$SSL_ISSUER" ]; then
   export SSL_ISSUER="$SSL_STAG_ISSUER";
 fi
