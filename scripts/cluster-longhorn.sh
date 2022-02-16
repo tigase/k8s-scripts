@@ -64,6 +64,15 @@ echo "      ${WARNING}Making oci storage class non-default${NORMAL}"
 kubectl patch storageclass oci -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 kubectl patch storageclass oci -p '{"metadata": {"annotations":{"storageclass.beta.kubernetes.io/is-default-class":"false"}}}'
 
+if [ ! -z "${LH_S3_BACKUP_ACCESS_KEY}" ]; then
+	kubectl create secret generic "aws-s3-backup" \
+    	--namespace "${LH_NAMESPACE}" \
+    	--from-literal=AWS_ACCESS_KEY_ID="${LH_S3_BACKUP_ACCESS_KEY}" \
+    	--from-literal=AWS_SECRET_ACCESS_KEY="${LH_S3_BACKUP_SECRET_KEY}" \
+    	--dry-run=client -o yaml | kubeseal --cert="${SEALED_SECRETS_PUB_KEY}" \
+    	--format=yaml > "${CL_DIR}/${NAME}/aws-s3-backup-credentials-sealed.yaml"
+fi
+
 AUTH_FILE="$TMP_DIR/auth"
 rm -f $AUTH_FILE
 echo "${USER_NAME}:$(openssl passwd -stdin -apr1 <<< ${USER_PASS})" >> $AUTH_FILE
