@@ -1,0 +1,27 @@
+    adminEmail: 'accounts@tigase.net'
+    adminUser: "admin"
+    adminPassword: ""
+    siteTitle: 'Tigase Translation Portal'
+    siteDomain: 'translate.tigase.net'
+    emailHost: 'smtp.email.us-phoenix-1.oci.oraclecloud.com'
+    emailSSL: false
+    emailUser: "ocid1.user.oc1..aaaaaaaafc6buxf4kre7fhth4e5d6c32qmorclwu2m3ulvwybreyga2qmz2q@ocid1.tenancy.oc1..aaaaaaaaele735eu5c6c3ggia2a5dgm4ml6bib2udhstcwbuebmw7mb2jraq.o2.com"
+    emailPassword: "gGVb6GW6Ld->dQ-I&bzU"
+    serverEmail: 'no-reply@translate.tigase.net'
+    defaultFromEmail: 'no-reply@translate.tigase.net'
+    extraConfig:
+      WEBLATE_SOCIAL_AUTH_GITHUB_ORG_KEY: "02e6d13ce765103ddd76"
+      WEBLATE_SOCIAL_AUTH_GITHUB_ORG_SECRET: "bd9888b2a06f0c2109816f5e8227d34e0d07248d"
+      WEBLATE_SOCIAL_AUTH_GITHUB_ORG_NAME: "tigase"
+    ingress:
+      enabled: true
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt"
+      hosts:
+        - host: "translate.tigase.net"
+          paths:
+            - /
+      tls:
+        - secretName: "weblate-translate-tigase-net"
+          hosts:
+            - "translate.tigase.net"

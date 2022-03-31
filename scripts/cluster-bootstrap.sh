@@ -22,7 +22,7 @@ ${SCRIPTS}/flux-bootstrap.sh || {
 wait_for_ready
 
 #BASE_TOOLS="common-sources ${SS_NAME} ${DA_NAME} ${IN_NAME} ${CM_NAME} ${LH_NAME} ${PM_NAME} ${LO_NAME} ${VE_NAME}"
-BASE_TOOLS="common-sources ${SS_NAME} ${DA_NAME} ${IN_NAME} ${CM_NAME} ${LH_NAME} ${PM_NAME} ${LO_NAME} ${ONEDEV_NAME}"
+BASE_TOOLS="common-sources ${SS_NAME} ${DA_NAME} ${IN_NAME} ${CM_NAME} ${LH_NAME} ${PM_NAME} ${LO_NAME} ${ONEDEV_NAME} ${WEBLATE_NAME}"
 
 echo -e "\n\n   ${BOLD}Deploying base tools ${BASE_TOOLS}${NORMAL}"
 
