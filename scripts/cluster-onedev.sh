@@ -20,26 +20,7 @@ fi
 
 TNS=${ONEDEV_TARGET_NAMESPACE}
 
-echo "      ${BOLD}Adding tigase helm chart${NORMAL}"
-
-cat > "${BASE_DIR}/sources/tigase-git.yaml" << EOF
-apiVersion: source.toolkit.fluxcd.io/v1beta1
-kind: GitRepository
-metadata:
-  name: tigase
-  namespace: flux-system
-spec:
-  interval: ${INTERVAL}
-  url: https://github.com/tigase/helm-charts
-  ref:
-    branch: master
-EOF
-
-update_kustomization ${BASE_DIR}/sources
-
-git add -A
-git commit -am "Added tigase source"
-
+${SCRIPTS}/cluster-tigase-helm-charts.sh
 
 ONEDEV_MYSQL_PASSWORD=`gen_token 8`
 ONEDEV_MYSQL_ROOT_PASSWORD=`gen_token 24`

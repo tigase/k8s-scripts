@@ -1,0 +1,41 @@
+    replicaCount: 1
+    
+    vhost: "${TIGASE_DOMAIN}"
+    
+    admins:
+      - 'admin@${TIGASE_DOMAIN}'
+      - 'wojtek@tigase.org'
+      - 'bmalkow@malkowscy.net'
+      - 'andrzej.wojcik@tigase.org'
+      - 'wojciech.kapcia@tigase.org'
+      - 'cron_runner@${TIGASE_DOMAIN}'
+
+    users:
+      create: false
+
+    fileUpload:
+      enabled: true
+      domain: "upload.${TIGASE_DOMAIN}"
+      storage: 's3'
+      s3storage:
+        endpointUrl: "${TIGASE_S3_UPLOAD_ENDPOINT}"
+        bucket: 'tigase-org-xmpp-upload'
+        accessKeyId: "${TIGASE_S3_UPLOAD_ACCESS_KEY}"
+        secret: "tigase-s3-upload"
+        pathStyleAccess: "${TIGASE_S3_UPLOAD_PATH_STYLE}"
+
+    ingress:
+      enabled: true
+      sslCertificateIssuer: "letsencrypt"
+      tls:
+        hosts:
+          - "upload.${TIGASE_DOMAIN}"
+      hosts:
+        - host: "upload.${TIGASE_DOMAIN}"
+          paths:
+            - path: /
+              pathType: Prefix
+        
+    resources:
+      limits:
+        memory: 1Gi

@@ -1,0 +1,16 @@
+    persistentVolume:
+      enabled: true
+
+    backup:
+      s3:
+        enabled: ${TIGASE_MYSQL_S3_BACKUP}
+        schedule: "${TIGASE_MYSQL_S3_BACKUP_SCHEDULE}"
+        endpoint: "${TIGASE_MYSQL_S3_BACKUP_ENDPOINT}"
+        bucket: "${TIGASE_MYSQL_S3_BACKUP_BUCKET}"
+        prefix: "${TIGASE_MYSQL_S3_BACKUP_PREFIX}"
+        existingSecret: "mysql-backup-s3"
+        expireIn: "${TIGASE_MYSQL_S3_BACKUP_EXPIRE_IN}"
+
+    resources:
+      limits:
+        memory: 512Mi
