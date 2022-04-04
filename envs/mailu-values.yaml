@@ -1,0 +1,68 @@
+    affinity:
+      podAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: "component"
+                  operator: In
+                  values:
+                    - "admin"
+            topologyKey: "kubernetes.io/hostname"    
+    certmanager:
+      enabled: true
+      issuerName: "letsencrypt"
+      apiVersion: "cert-manager.io/v1"
+    front:
+      hostPort:
+        enabled: false
+      externalService:
+        enabled: true
+        externalTrafficPolicy: Local
+        type: LoadBalancer
+    admin:
+      resources:
+        requests:
+          cpu: 80m
+    postfix:
+      resources:
+        requests:
+          cpu: 80m
+    dovecot:
+      resources:
+        requests:
+          cpu: 80m
+    roundcube:
+      resources:
+        requests:
+          cpu: 50m 
+    redis:
+      resources:
+        requests:
+          cpu: 50m
+    clamav:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "component"
+                    operator: In
+                    values:
+                      - "clamav"
+              topologyKey: "kubernetes.io/hostname"  
+      resources:
+        requests:
+          cpu: 80m
+    rspamd:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "component"
+                    operator: In
+                    values:
+                      - "clamav"
+              topologyKey: "kubernetes.io/hostname"  
+      startupProbe:
+         periodSeconds: 900
