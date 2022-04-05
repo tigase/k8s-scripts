@@ -54,6 +54,9 @@
         requests:
           cpu: 80m
     rspamd:
+      resources:
+        limits:
+          memory: 500Mi
       affinity:
         podAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
