@@ -40,6 +40,11 @@ if [ -z "${MAILU_ADMIN_USERNAME}" ]; then
   [[ -z ${p_key} ]] || MAILU_ADMIN_PASSWORD=${p_key}
 fi
 
+if [ -z "${MAILU_SUBNET}" ]; then
+  echo -n "Provide subnet from which to allow to accept connections: "; read s_key;
+  [[ -z ${s_key} ]] || MAILU_SUBNET=${s_key}
+fi 
+
 HOSTNAMES_COUNT=${#MAILU_HOSTNAMES[@]}
 if [ $HOSTNAMES_COUNT == 0 ]; then
 	echo "No hostnames!"
@@ -57,6 +62,7 @@ VALUES="$VALUES\n    initialAccount:"
 VALUES="$VALUES\n      username: \"${MAILU_ADMIN_USERNAME}\""
 VALUES="$VALUES\n      domain: \"${MAILU_ADMIN_DOMAIN}\""
 VALUES="$VALUES\n      password: \"${MAILU_ADMIN_PASSWORD}\""
+VALUES="$VALUES\n    subnet: \"${MAILU_SUBNET}\""
 
 echo "      ${BOLD}Adding Mailu helm chart${NORMAL}"
 
