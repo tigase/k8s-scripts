@@ -4,7 +4,7 @@ Various scripts for automated k8s cluster bootstrap and management with fluxcd.
 
 Scripts are created and tested in Linux (Ubuntu) environment but should work on any system with Bash and basic tools installed to default executable PATH.
 
-Requirements
+## Requirements
 
 1. Running 'empty' k8s cluster
 2. Configured and working local environment with kubectl connecting to the k8s cluster by default
@@ -17,13 +17,13 @@ Requirements
   - yq - https://github.com/mikefarah/yq/
 4. Bash
 
-Initial setup:
+## Initial Setup
 
 1. Create config file for configuration settings and backup, ie. ```mkdir ~/.tigase-flux```. If you wish to put config in a different location, set `TIG_CLUSTER_HOME` variable to point to this location. This will be used as `CONFIG` variable.
 2. Copy entire `envs` folder to ${CONFIG}/envs: ```cp -rv envs ${CONFIG}/```
-3. Edit `cluster.env` file. Typically cluster name and github credentials must be provided. The rest can be left to defaults.
+3. Edit `cluster.env` file. Typically `CLUSTER_NAME`, `GITHUB_USER`/`GITHUB_TOKEN` and `SSL_EMAIL` must be provided. The rest can be left to defaults.
 
-Usage:
+## Usage
 
 The main script to bootstrap fluxcd on k8s custer with all basic services is `cluster-bootsrap.sh`. Normally if the environment is correctly configured and tested this is all that needs to be run.
 It may take a few minutes but everything is setup automatically with no input from the user.
