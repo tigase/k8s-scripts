@@ -45,6 +45,25 @@ if [ -z "${MAILU_SUBNET}" ]; then
   [[ -z ${s_key} ]] || MAILU_SUBNET=${s_key}
 fi 
 
+if [ -z "${MAILU_RELAY_HOST}" ]; then
+  echo -n "Provide relay host for sending outgoing emails: "; read h_key;
+  [[ -z ${h_key} ]] || MAILU_RELAY_HOST=${h_key}
+fi
+
+if [ ! -z "${MAILU_RELAY_HOST}" ]; then
+  if [ -z "${MAILU_RELAY_USERNAME}" ]; then
+	echo -n "Provide relay username: "; read u_key;
+	[[ -z ${u_key} ]] || MAILU_RELAY_USERNAME=${u_key}
+  fi
+  
+  if [ ! -z "${MAILU_RELAY_USERNAME}" ]; then
+    if [ -z "${MAILU_RELAY_PASSWORD}" ]; then
+	  echo -n "Provide relay password: "; read p_key;
+	  [[ -z ${p_key} ]] || MAILU_RELAY_PASSWORD=${p_key}
+    fi
+  fi
+fi
+
 HOSTNAMES_COUNT=${#MAILU_HOSTNAMES[@]}
 if [ $HOSTNAMES_COUNT == 0 ]; then
 	echo "No hostnames!"
@@ -63,6 +82,16 @@ VALUES="$VALUES\n      username: \"${MAILU_ADMIN_USERNAME}\""
 VALUES="$VALUES\n      domain: \"${MAILU_ADMIN_DOMAIN}\""
 VALUES="$VALUES\n      password: \"${MAILU_ADMIN_PASSWORD}\""
 VALUES="$VALUES\n    subnet: \"${MAILU_SUBNET}\""
+if [ ! -z "${MAILU_RELAY_HOST}" ]; then
+  VALUES="$VALUES\n    external_relay:"
+  VALUES="$VALUES\n      host: \"${MAILU_RELAY_HOST}\""
+  if [ ! -z "${MAILU_RELAY_USERNAME}" ]; then
+    VALUES="$VALUES\n      username: \"${MAILU_RELAY_USERNAME}\""
+  fi
+  if [ ! -z "${MAILU_RELAY_PASSWORD}" ]; then
+    VALUES="$VALUES\n      password: \"${MAILU_RELAY_PASSWORD}\""
+  fi
+fi
 
 echo "      ${BOLD}Adding Mailu helm chart${NORMAL}"
 
