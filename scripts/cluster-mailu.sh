@@ -12,21 +12,21 @@ cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "${ERROR}No cluster repo dir!${NOR
 
 TNS=${MAILU_TARGET_NAMESPACE}
 
-if [ -z "${MAILU_HOSTNAME}" ]; then
-  echo -n "Provide hostname: "; read h_key;
-  [[ -z ${h_key} ]] || MAILU_HOSTNAME=${h_key}
+if [ -z "${MAILU_DOMAIN}" ]; then
+  echo -n "Provide domain: "; read h_key;
+  [[ -z ${h_key} ]] || MAILU_DOMAIN=${h_key}
 fi
 
-if [ -z "${MAILU_DOMAINS}" ]; then
-  MAILU_DOMAINS=()
+if [ -z "${MAILU_HOSTNAMES}" ]; then
+  MAILU_HOSTNAMES=()
   while : ; do 
-    echo -n "Provide domain to host emails for, or empty to continue: "; read d_key;
+    echo -n "Provide hostname to host emails for, or empty to continue: "; read d_key;
     if [[ -z ${d_key} ]]; then
       break;
     else
-      idx=$(( ${#MAILU_DOMAINS[@]} + 1 ));
-      MAILU_DOMAINS[${idx}]="${d_key}";
-        echo "Domains: $idx"
+      idx=$(( ${#MAILU_HOSTNAMES[@]} + 1 ));
+      MAILU_HOSTNAMES[${idx}]="${d_key}";
+        echo "Hostnames: $idx"
     fi
   done
 fi
@@ -40,17 +40,17 @@ if [ -z "${MAILU_ADMIN_USERNAME}" ]; then
   [[ -z ${p_key} ]] || MAILU_ADMIN_PASSWORD=${p_key}
 fi
 
-DOMAINS_COUNT=${#MAILU_DOMAINS[@]}
-if [ $DOMAINS_COUNT == 0 ]; then
-	echo "No domains!"
+HOSTNAMES_COUNT=${#MAILU_HOSTNAMES[@]}
+if [ $HOSTNAMES_COUNT == 0 ]; then
+	echo "No hostnames!"
 	exit 1
 fi
 
-VALUES=$"    secretKey: \"${MAILU_ADMIN_PASSWORD}\"\n    domain: \"$MAILU_HOSTNAME\"\n    hostnames:"
-for domain in "${MAILU_DOMAINS[@]}"
+VALUES=$"    secretKey: \"${MAILU_ADMIN_PASSWORD}\"\n    domain: \"$MAILU_DOMAIN\"\n    hostnames:"
+for vhost in "${MAILU_HOSTNAMES[@]}"
 do
   echo "$i"
-  VALUES=$"$VALUES\n      - \"$domain\""
+  VALUES=$"$VALUES\n      - \"$vhost\""
 done 
 
 VALUES="$VALUES\n    initialAccount:"
