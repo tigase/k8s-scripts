@@ -11,6 +11,7 @@ Requirements
 3. Commandline tools installed and available in executable PATH
   - pwgen
   - kubectl
+  - kubeseal
   - fluxcd - https://fluxcd.io/docs/installation/
   - kustomize - https://kubectl.docs.kubernetes.io/installation/kustomize/
   - git
