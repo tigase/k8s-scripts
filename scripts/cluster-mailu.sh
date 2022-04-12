@@ -119,6 +119,6 @@ printf "\n$VALUES" >> "${CL_DIR}/${NAME}/${NAME}.yaml"
 
 echo "      ${BOLD}Deploying changes${NORMAL}"
 
-#update_repo ${NAME}
+update_repo ${NAME}
 
-#wait_for_ready
+wait_for_ready
