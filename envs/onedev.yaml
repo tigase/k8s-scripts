@@ -1,4 +1,6 @@
     onedev:  
+      service:
+        type: ClusterIP
       persistentVolume:
         enabled: true
 

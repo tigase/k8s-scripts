@@ -150,6 +150,10 @@ update_kustomization ${CL_DIR}
 
 update_kustomization ${APPS_DIR}
 
+INGRESS_DIR=`mkdir_ns ${BASE_DIR} ${IN_TARGET_NAMESPACE} ${FLUX_NS}`
+
+sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 22: \"${TNS}/${NAME}:22\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
+
 echo "      ${BOLD}Deploying changes${NORMAL}"
 
 update_repo ${NAME}

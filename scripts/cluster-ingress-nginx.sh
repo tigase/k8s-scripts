@@ -25,6 +25,7 @@ ${SCRIPTS}/flux-create-helmrel.sh \
 update_chart_ns "${CL_DIR}/${NAME}/${NAME}.yaml"
 yq e -i '.spec.install.remediation.retries = 3' "${CL_DIR}/${NAME}/${NAME}.yaml"
 yq e -i '.spec.upgrade.remediation.retries = 3' "${CL_DIR}/${NAME}/${NAME}.yaml"
+sed -i'' -e 's/upgrade:/    tcp:\nupgrade:/' "${CL_DIR}/${NAME}/${NAME}.yaml"
 
 update_repo "${NAME}"
 
