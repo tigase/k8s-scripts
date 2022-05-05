@@ -189,6 +189,17 @@ update_kustomization ${CL_DIR}
 
 update_kustomization ${APPS_DIR}
 
+INGRESS_DIR=`mkdir_ns ${BASE_DIR} ${IN_TARGET_NAMESPACE} ${FLUX_NS}`
+
+sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 8080: \"${TNS}/${NAME}-tigase-xmpp-server:8080\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
+sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 5291: \"${TNS}/${NAME}-tigase-xmpp-server:5291\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
+sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 5290: \"${TNS}/${NAME}-tigase-xmpp-server:5290\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
+sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 5280: \"${TNS}/${NAME}-tigase-xmpp-server:5280\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
+sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 5269: \"${TNS}/${NAME}-tigase-xmpp-server:5269\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
+sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 5223: \"${TNS}/${NAME}-tigase-xmpp-server:5223\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
+sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 5222: \"${TNS}/${NAME}-tigase-xmpp-server:5222\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
+
+
 echo "      ${BOLD}Deploying changes${NORMAL}"
 
 update_repo ${NAME}

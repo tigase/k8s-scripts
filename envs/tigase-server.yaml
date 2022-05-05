@@ -24,6 +24,9 @@
         secret: "tigase-s3-upload"
         pathStyleAccess: "${TIGASE_S3_UPLOAD_PATH_STYLE}"
 
+    service:
+      type: ClusterIP
+      
     ingress:
       enabled: true
       sslCertificateIssuer: "letsencrypt"
