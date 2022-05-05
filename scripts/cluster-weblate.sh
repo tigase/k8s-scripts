@@ -49,17 +49,29 @@ if [ -z "${WEBLATE_EMAIL_ADDRESS}" ]; then
   [[ -z ${o_key} ]] || WEBLATE_EMAIL_ADDRESS=${o_key}
 fi
 
-if [ -z "${WEBLATE_SOCIAL_AUTH_GITHUB_ORG_KEY}" ]; then
+if [ -z "${WEBLATE_SOCIAL_AUTH_GITHUB_KEY}" ]; then
   echo -n "Provide GitHub OAuth key: "; read o_key;
+  [[ -z ${o_key} ]] || WEBLATE_SOCIAL_AUTH_GITHUB_KEY=${o_key}
+
+  if [ ! -z "${WEBLATE_SOCIAL_AUTH_GITHUB_KEY}" ]; then
+  	if [ -z "${WEBLATE_SOCIAL_AUTH_GITHUB_SECRET}" ]; then
+	  echo -n "Provide GitHub OAuth secret: "; read s_key;
+  	  [[ -z ${s_key} ]] || WEBLATE_SOCIAL_AUTH_GITHUB_SECRET=${s_key}
+  	fi
+  fi  
+fi
+
+if [ -z "${WEBLATE_SOCIAL_AUTH_GITHUB_ORG_KEY}" ]; then
+  echo -n "Provide GitHubOrg OAuth key: "; read o_key;
   [[ -z ${o_key} ]] || WEBLATE_SOCIAL_AUTH_GITHUB_ORG_KEY=${o_key}
 
   if [ ! -z "${WEBLATE_SOCIAL_AUTH_GITHUB_ORG_KEY}" ]; then
   	if [ -z "${WEBLATE_SOCIAL_AUTH_GITHUB_ORG_SECRET}" ]; then
-	  echo -n "Provide GitHub OAuth secret: "; read s_key;
+	  echo -n "Provide GitHubOrg OAuth secret: "; read s_key;
   	  [[ -z ${s_key} ]] || WEBLATE_SOCIAL_AUTH_GITHUB_ORG_SECRET=${s_key}
   	fi
   	if [ -z "${WEBLATE_SOCIAL_AUTH_GITHUB_ORG_NAME}" ]; then
-	  echo -n "Provide GitHub OAuth organization name: "; read n_key;
+	  echo -n "Provide GitHubOrg OAuth organization name: "; read n_key;
   	  [[ -z ${n_key} ]] || WEBLATE_SOCIAL_AUTH_GITHUB_ORG_NAME=${n_key}
   	fi
   fi  
@@ -96,6 +108,10 @@ VALUES="$VALUES\n    serverEmail: \"${WEBLATE_EMAIL_ADDRESS}\""
 VALUES="$VALUES\n    defaultFromEmail: \"${WEBLATE_EMAIL_ADDRESS}\""
 
 VALUES="$VALUES\n    extraConfig:"
+[ -z "$WEBLATE_SOCIAL_AUTH_GITHUB_KEY" ] \
+	|| VALUES="$VALUES\n      WEBLATE_SOCIAL_AUTH_GITHUB_KEY=\"${WEBLATE_SOCIAL_AUTH_GITHUB_KEY}\""
+[ -z "$WEBLATE_SOCIAL_AUTH_GITHUB_SECRET" ] \
+    || VALUES="$VALUES\n      WEBLATE_SOCIAL_AUTH_GITHUB_SECRET=\"${WEBLATE_SOCIAL_AUTH_GITHUB_SECRET}\"" 
 [ -z "$WEBLATE_SOCIAL_AUTH_GITHUB_ORG_KEY" ] \
 	|| VALUES="$VALUES\n      WEBLATE_SOCIAL_AUTH_GITHUB_ORG_KEY=\"${WEBLATE_SOCIAL_AUTH_GITHUB_ORG_KEY}\""
 [ -z "$WEBLATE_SOCIAL_AUTH_GITHUB_ORG_SECRET" ] \
