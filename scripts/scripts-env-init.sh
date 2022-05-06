@@ -51,7 +51,7 @@ export ERROR="$BOLD$RED"
 export WARNING="$BOLD$YELLOW"
 
 # Make sure all required executables are installed
-REQUIRED_CMDS="pwgen kubectl flux kustomize git yq"
+REQUIRED_CMDS="pwgen kubectl kubeseal flux kustomize git yq"
 
 for CMD in $REQUIRED_CMDS; do
   if ! command -v "$CMD" &> /dev/null; then
@@ -66,3 +66,5 @@ source "${SCRIPTS}/cluster-tools.sh" || exit 1
 if [ -z "$SSL_ISSUER" ]; then
   export SSL_ISSUER="$SSL_STAG_ISSUER";
 fi
+
+echo "All seems to be OK and ready to go"
