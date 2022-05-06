@@ -67,4 +67,4 @@ if [ -z "$SSL_ISSUER" ]; then
   export SSL_ISSUER="$SSL_STAG_ISSUER";
 fi
 
-echo "All seems to be OK and ready to go"
+[ "$1" != "--check" ] || echo "All seems to be OK and ready to go"
