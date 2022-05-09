@@ -8,6 +8,14 @@ source `dirname "$0"`/scripts-env-init.sh
 
 cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "No cluster repo dir!"; exit 1; }
 
+name="${SS_S_NAME}"
+url="${SS_URL}"
+
+echo "      ${BOLD}Adding ${name} source at ${url}${NORMAL}"
+${SCRIPTS}/flux-create-source.sh ${name} ${url}
+update_repo "${SS_NAME}"
+wait_for_ready
+
 echo "   ${BOLD}Deploying sealed secrets${NORMAL}"
 ${SCRIPTS}/flux-create-helmrel.sh \
         "${SS_NAME}" \
