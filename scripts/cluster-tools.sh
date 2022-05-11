@@ -103,3 +103,14 @@ gen_token() {
   echo ${t}
 }
 
+# Function forwards port from ingress-nginx to service
+
+ingress_nginx_forward_port() {
+  INGRESS_DIR=`mkdir_ns ${BASE_DIR} ${IN_TARGET_NAMESPACE} ${FLUX_NS}`
+  port="$1"
+  tns="$2"
+  name="$3"
+  yq e ".spec.values.tcp.str_${port} = \"${tns}/${name}:${port}\"" -i "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
+  sed -i'' -e "s/str_${port}/\!\!str ${port}/" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
+}
+

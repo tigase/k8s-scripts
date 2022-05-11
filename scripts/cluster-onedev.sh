@@ -150,9 +150,7 @@ update_kustomization ${CL_DIR}
 
 update_kustomization ${APPS_DIR}
 
-INGRESS_DIR=`mkdir_ns ${BASE_DIR} ${IN_TARGET_NAMESPACE} ${FLUX_NS}`
-
-sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 22: \"${TNS}/${NAME}:22\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
+ingress_nginx_forward_port 22 "$ONEDEV_TARGET_NAMESPACE" "$ONEDEV_NAME"
 
 echo "      ${BOLD}Deploying changes${NORMAL}"
 

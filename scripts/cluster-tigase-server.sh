@@ -189,16 +189,10 @@ update_kustomization ${CL_DIR}
 
 update_kustomization ${APPS_DIR}
 
-INGRESS_DIR=`mkdir_ns ${BASE_DIR} ${IN_TARGET_NAMESPACE} ${FLUX_NS}`
-
-sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 8080: \"${TNS}/${NAME}-tigase-xmpp-server:8080\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
-sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 5291: \"${TNS}/${NAME}-tigase-xmpp-server:5291\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
-sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 5290: \"${TNS}/${NAME}-tigase-xmpp-server:5290\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
-sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 5280: \"${TNS}/${NAME}-tigase-xmpp-server:5280\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
-sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 5269: \"${TNS}/${NAME}-tigase-xmpp-server:5269\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
-sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 5223: \"${TNS}/${NAME}-tigase-xmpp-server:5223\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
-sed -i'' -e "s#    tcp:#    tcp:\n        \!\!str 5222: \"${TNS}/${NAME}-tigase-xmpp-server:5222\"#" "${INGRESS_DIR}/${IN_NAME}/${IN_NAME}.yaml"
-
+for port in 5222 5223 5269 5280 5290 5291 8080
+do
+  ingress_nginx_forward_port "$port" "$TNS" "$NAME-tigase-xmpp-server"
+done
 
 echo "      ${BOLD}Deploying changes${NORMAL}"
 
