@@ -24,7 +24,7 @@ controller:
     default: true
   replicaCount: 2
   metrics:
-    enabled: true
+    enabled: false
     serviceMonitor:
       enabled: true
       additionalLabels:
