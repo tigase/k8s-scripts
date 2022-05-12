@@ -5,10 +5,18 @@
 
 source `dirname "$0"`/scripts-env-init.sh
 
+cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "No cluster repo dir!"; exit 1; }
+
+name="${IN_S_NAME}"
+url="${IN_URL}"
+
+echo "      ${BOLD}Adding ${name} source at ${url}${NORMAL}"
+${SCRIPTS}/flux-create-source.sh ${name} ${url}
+update_repo "${IN_NAME}"
+wait_for_ready
+
 NAME="${IN_NAME}"
 TNS="${IN_TARGET_NAMESPACE}"
-
-cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "No cluster repo dir!"; exit 1; }
 
 CL_DIR=`mkdir_ns ${BASE_DIR} ${TNS} ${FLUX_NS}`
 
@@ -28,5 +36,5 @@ yq e -i '.spec.upgrade.remediation.retries = 3' "${CL_DIR}/${NAME}/${NAME}.yaml"
 
 update_repo "${NAME}"
 
-#wait_for_ready
+wait_for_ready
 
