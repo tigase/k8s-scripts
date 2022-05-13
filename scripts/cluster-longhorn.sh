@@ -10,6 +10,16 @@
 
 source `dirname "$0"`/scripts-env-init.sh
 
+cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "No cluster repo dir!"; exit 1; }
+
+name="${LH_S_NAME}"
+url="${LH_URL}"
+
+echo "      ${BOLD}Adding ${name} source at ${url}${NORMAL}"
+${SCRIPTS}/flux-create-source.sh ${name} ${url}
+update_repo "${LH_NAME}"
+wait_for_ready
+
 NAME="${LH_NAME}"
 TNS=${LH_TARGET_NAMESPACE}
 SEALED_SECRETS_PUB_KEY="pub-sealed-secrets-${CLUSTER_NAME}.pem"
@@ -29,8 +39,6 @@ SEALED_SECRETS_PUB_KEY="pub-sealed-secrets-${CLUSTER_NAME}.pem"
 #source ${HOME}/.oci/k8stests-secrets-keys || exit 1
 #S3_SECRET_KEY="${secret_key}"
 #S3_ACCESS_KEY="${access_key}"
-
-cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "No cluster repo dir!"; exit 1; }
 
 CL_DIR=`mkdir_ns ${BASE_DIR} ${TNS} ${FLUX_NS}`
 
@@ -65,12 +73,13 @@ kubectl patch storageclass oci -p '{"metadata": {"annotations":{"storageclass.ku
 kubectl patch storageclass oci -p '{"metadata": {"annotations":{"storageclass.beta.kubernetes.io/is-default-class":"false"}}}'
 
 if [ ! -z "${LH_S3_BACKUP_ACCESS_KEY}" ]; then
-	kubectl create secret generic "aws-s3-backup" \
-    	--namespace "${LH_NAMESPACE}" \
+  kubectl create secret generic "aws-s3-backup" \
+        --namespace "longhorn-system" \
     	--from-literal=AWS_ACCESS_KEY_ID="${LH_S3_BACKUP_ACCESS_KEY}" \
     	--from-literal=AWS_SECRET_ACCESS_KEY="${LH_S3_BACKUP_SECRET_KEY}" \
     	--dry-run=client -o yaml | kubeseal --cert="${SEALED_SECRETS_PUB_KEY}" \
     	--format=yaml > "${CL_DIR}/${NAME}/aws-s3-backup-credentials-sealed.yaml"
+  kubectl apply -f "${CL_DIR}/${NAME}/aws-s3-backup-credentials-sealed.yaml"
 fi
 
 AUTH_FILE="$TMP_DIR/auth"
@@ -91,24 +100,23 @@ metadata:
     nginx.ingress.kubernetes.io/auth-type: basic
     nginx.ingress.kubernetes.io/ssl-redirect: 'false'
     nginx.ingress.kubernetes.io/auth-secret: basic-auth
-    nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required '
+    nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
-  defaultBackend:
-    service:
-      name: longhorn-frontend
-      port:
-        number: 80
   rules:
   - http:
       paths:
       - pathType: Prefix
-        path: "/lh/"
+        path: /lh(/|$)(.*)
         backend:
           service:
             name: longhorn-frontend
             port:
               number: 80
 EOF
+
+echo "You can access LH UI using 'kubectl proxy --port 8001' and then open link in your browser:"
+echo "http://localhost:8001/api/v1/namespaces/longhorn-system/services/http:longhorn-frontend:80/proxy/"
 
 update_kustomization "${CL_DIR}/${NAME}"
 
