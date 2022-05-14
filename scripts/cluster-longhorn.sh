@@ -18,7 +18,7 @@ url="${LH_URL}"
 echo "      ${BOLD}Adding ${name} source at ${url}${NORMAL}"
 ${SCRIPTS}/flux-create-source.sh ${name} ${url}
 update_repo "${LH_NAME}"
-wait_for_ready
+wait_for_ready 5
 
 NAME="${LH_NAME}"
 TNS=${LH_TARGET_NAMESPACE}
@@ -101,7 +101,7 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: 'false'
     nginx.ingress.kubernetes.io/auth-secret: basic-auth
     nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/rewrite-target: /\$2
 spec:
   rules:
   - http:
@@ -117,6 +117,23 @@ EOF
 
 echo "You can access LH UI using 'kubectl proxy --port 8001' and then open link in your browser:"
 echo "http://localhost:8001/api/v1/namespaces/longhorn-system/services/http:longhorn-frontend:80/proxy/"
+
+echo "      ${INFO}Setting up daily recurring backups${NORMAL}"
+cat >> "${CL_DIR}/${NAME}/${NAME}-daily-backup.yaml" <<EOF
+apiVersion: longhorn.io/v1beta1
+kind: RecurringJob
+metadata:
+  name: backup-daily-4-7
+  namespace: longhorn-system
+spec:
+  cron: "7 4 * * ?"
+  task: "backup"
+  groups:
+  - default
+  retain: 30
+  concurrency: 2
+EOF
+rm -f "${CL_DIR}/${NAME}/${NAME}-daily-backup.yaml"
 
 update_kustomization "${CL_DIR}/${NAME}"
 

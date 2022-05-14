@@ -14,7 +14,7 @@ url="${SS_URL}"
 echo "      ${BOLD}Adding ${name} source at ${url}${NORMAL}"
 ${SCRIPTS}/flux-create-source.sh ${name} ${url}
 update_repo "${SS_NAME}"
-wait_for_ready
+wait_for_ready 5
 
 echo "   ${BOLD}Deploying sealed secrets${NORMAL}"
 ${SCRIPTS}/flux-create-helmrel.sh \

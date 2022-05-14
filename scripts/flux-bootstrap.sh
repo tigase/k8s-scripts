@@ -12,6 +12,10 @@ source `dirname "$0"`/scripts-env-init.sh
   exit 1
 }
 
+flux check
+echo "    ${INFO}Press ENTER if everything looks correct, Ctrl-C to stop${NORMAL}"
+read abc
+
 flux bootstrap github \
   --owner=$GITHUB_USER \
   --repository=$CLUSTER_REPO \

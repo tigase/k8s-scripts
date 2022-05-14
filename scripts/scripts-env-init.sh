@@ -49,6 +49,7 @@ else
 fi
 export ERROR="$BOLD$RED"
 export WARNING="$BOLD$YELLOW"
+export INFO="$BOLD$GREEN"
 
 # Make sure all required executables are installed
 REQUIRED_CMDS="pwgen kubectl kubeseal flux kustomize git yq"
