@@ -118,8 +118,14 @@ EOF
 echo "You can access LH UI using 'kubectl proxy --port 8001' and then open link in your browser:"
 echo "http://localhost:8001/api/v1/namespaces/longhorn-system/services/http:longhorn-frontend:80/proxy/"
 
-echo "      ${INFO}Setting up daily recurring backups${NORMAL}"
-cat >> "${CL_DIR}/${NAME}/${NAME}-daily-backup.yaml" <<EOF
+update_kustomization "${CL_DIR}/${NAME}"
+
+update_repo ${NAME}
+
+if [ ! -z "${LH_S3_BACKUP_ACCESS_KEY}" ]; then
+
+  echo "      ${INFO}Setting up daily recurring backups${NORMAL}"
+  cat >> "${CL_DIR}/${NAME}/${NAME}-daily-backup.yaml" <<EOF
 apiVersion: longhorn.io/v1beta1
 kind: RecurringJob
 metadata:
@@ -133,9 +139,8 @@ spec:
   retain: 30
   concurrency: 2
 EOF
-rm -f "${CL_DIR}/${NAME}/${NAME}-daily-backup.yaml"
 
-update_kustomization "${CL_DIR}/${NAME}"
+  update_kustomization "${CL_DIR}/${NAME}"
+  update_repo ${NAME}
 
-update_repo ${NAME}
-
+fi
