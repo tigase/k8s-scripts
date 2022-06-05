@@ -32,6 +32,15 @@ fi
 
 source "${CONFIG}/envs/cluster.env" || { echo "No cluster.env file"; exit 1; }
 
+[ -z ${K8S_CONTEXT} ] && {
+  echo "K8S_CONTEXT not set."
+  echo "Update your cluster.env file and set K8S_CONTEXT to your k8s context:"
+  echo "kubectl config get-contexts"
+  echo "Then copy your context name as the variable value"
+  exit 1
+}
+kubectl config use-context ${K8S_CONTEXT}
+
 if [ "$COLORED_OUTPUT" = true ]; then
 	export BOLD="$(tput bold)"
 	export RED="$(tput setaf 1)"

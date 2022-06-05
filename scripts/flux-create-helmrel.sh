@@ -53,22 +53,7 @@ shift
 #### $6
 [[ -z "$1" ]] || { SOURCE="$1"; shift; }
 
-CL_DIR="${BASE_DIR}"
-
-# Services for the same namespace are stored in the same folder
-[[ "${TARGET_NAMESPACE}" == "${FLUX_NS}" ]] || {
-  echo "Creating folder for ${TARGET_NAMESPACE} namespace..."
-  CL_DIR="${CL_DIR}/${TARGET_NAMESPACE}" 
-  mkdir -p ${CL_DIR}
-  [[ -f "${CL_DIR}/namespace.yaml" ]] || {
-cat > "${CL_DIR}/namespace.yaml" <<EOF
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ${TARGET_NAMESPACE}
-EOF
-  }
-}
+CL_DIR=`create_ns ${BASE_DIR} ${TARGET_NAMESPACE}`
 
 DIR="${CL_DIR}/${NAME}"
 FILE="${DIR}/${NAME}.yaml"

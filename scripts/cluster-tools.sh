@@ -9,14 +9,37 @@
 # $1 - optional WAIT time
 wait_for_ready() {
   WAIT=20
+  COND="Unknown"
   [[ -z "$1" ]] || { WAIT=$1; }
+  [[ -z "$2" ]] || { COND=$2; }
   echo "${CYAN}Waiting for the system to be ready${NORMAL}"
   sleep ${WAIT}
-  while flux get all -A | grep -q Unknown ; do 
+  while flux get all -A | grep -q ${COND} ; do 
     DATE=`date "+%Y-%m-%d %H:%M:%S"`
-    echo "${CYAN}${BOLD}${DATE} System not ready yet, waiting ${WAIT}${NORMAL}"
+    echo "${CYAN}${BOLD}${DATE} System not ready yet, waiting anoher ${WAIT} seconds${NORMAL}"
     sleep ${WAIT}
   done
+}
+
+# Function prepares dir path for a git repository structure based
+# on service type, namespace and name.
+#  If the given NAMESPACE is the same as
+# DEFAULT_NS, no changes are made as the service is then located
+# in default folder.
+# $1 - mandatory BASE_DIR where the services' definitions are
+#      stored in git repository. Typically this is: 
+#      /ABSOLUTE_PATH_TO_CLUSTER_REPO/infra/common
+#      or
+#      /ABSOLUTE_PATH_TO_CLUSTER_REPO/infra/apps
+# $2 - mandatory NAMESPACE for which the strucutre has to be created
+# $3 - mandatory DEFAULT_NS
+prepdir_ns() {
+  # Services for the same namespace are stored in the same folder
+  CL="${1}"
+  [[ "${2}" == "${3}" ]] || {
+    CL="${CL}/${2}"
+  }
+  echo ${CL}
 }
 
 # Function prepares git repository structure for services for
@@ -32,13 +55,27 @@ wait_for_ready() {
 # $3 - mandatory DEFAULT_NS
 mkdir_ns() {
   # Services for the same namespace are stored in the same folder
-  CL="${1}"
-  [[ "${2}" == "${3}" ]] || {
-    CL="${CL}/${2}"
-    mkdir -p ${CL}
-  }
+  CL=`prepdir_ns ${1} ${2} ${3}`
+  mkdir -p ${CL}
   echo ${CL}
 }
+
+# Function creates namespace folder and file if necessary.
+# $1 - mandatory BASE DIR which is different for common services and applications
+# $2 - mandatory NAMESPACE to create
+create_ns() {
+  cl_dir=`mkdir_ns $1 $2 ${FLUX_NS}`
+  tns=$2
+  [[ -f "${cl_dir}/namespace.yaml" ]] || {
+    cat > "${cl_dir}/namespace.yaml" <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${tns}
+EOF
+  }
+  echo ${cl_dir}
+} 
 
 # Function updates kustomization.yaml in a given folder
 # $1 - optional folder where the kustomization has to be updated

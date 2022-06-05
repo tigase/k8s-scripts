@@ -6,11 +6,19 @@
 
 source `dirname "$0"`/scripts-env-init.sh
 
+cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "${ERROR}No cluster repo dir!${NORMAL}"; exit 1; }
+
+name="${DA_S_NAME}"
+url="${DA_URL}"
+
+echo "      ${BOLD}Adding ${name} source at ${url}${NORMAL}"
+${SCRIPTS}/flux-create-source.sh ${name} ${url}
+update_repo "${DA_NAME}"
+wait_for_ready 5
+
 NAME=${DA_NAME}
 TNS=${DA_TARGET_NAMESPACE}
 DA_USER="dashboard-admin"
-
-cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "${ERROR}No cluster repo dir!${NORMAL}"; exit 1; }
 
 CL_DIR=`mkdir_ns ${BASE_DIR} ${TNS} ${FLUX_NS}`
 
