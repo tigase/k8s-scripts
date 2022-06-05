@@ -1,71 +1,74 @@
-    affinity:
-      podAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-                - key: "component"
-                  operator: In
-                  values:
-                    - "admin"
-            topologyKey: "kubernetes.io/hostname"    
+    logLevel: WARNING
+    nodeSelector:
+      beta.kubernetes.io/arch: amd64
+      kubernetes.io/arch: amd64
+    persistence:
+      single_pvc: false
     certmanager:
       enabled: true
-      issuerName: "letsencrypt"
+      issuerName: letsencrypt
       apiVersion: "cert-manager.io/v1"
     front:
+      controller:
+        kind: DaemonSet
       hostPort:
         enabled: false
       externalService:
         enabled: true
         externalTrafficPolicy: Local
+        annotations:
+          service.beta.kubernetes.io/oci-load-balancer-shape: "flexible"
+          service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: "10"
+          service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: "20"
         type: LoadBalancer
+        imap:
+          imap: true
+          imaps: true
+        smtp:
+          smtp: true
+          smtps: true
+          submission: true
     admin:
+      persistence:
+        size: 1Gi
       resources:
         requests:
           cpu: 80m
     postfix:
+      persistence:
+        size: 5Gi
       resources:
         requests:
           cpu: 80m
     dovecot:
+      persistence:
+        size: 50Gi
       resources:
         requests:
           cpu: 80m
     roundcube:
+      persistence:
+        size: 1Gi
       resources:
         requests:
           cpu: 50m 
     redis:
+      persistence:
+        size: 5Gi
       resources:
         requests:
           cpu: 50m
+    rspamd_clamav_persistence:
+      single_pvc: false
     clamav:
-      affinity:
-        podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: "component"
-                    operator: In
-                    values:
-                      - "clamav"
-              topologyKey: "kubernetes.io/hostname"  
+      persistence:
+        size: 2Gi
       resources:
         requests:
           cpu: 80m
     rspamd:
+      persistence:
+        size: 1Gi
       resources:
         limits:
           memory: 500Mi
-      affinity:
-        podAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: "component"
-                    operator: In
-                    values:
-                      - "clamav"
-              topologyKey: "kubernetes.io/hostname"  
-      startupProbe:
-         periodSeconds: 900
