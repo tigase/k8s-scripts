@@ -8,6 +8,12 @@ source `dirname "$0"`/scripts-env-init.sh
 
 cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "No cluster repo dir!"; exit 1; }
 
+CL_SERV_NAME=${CM_NAME}
+CL_SERV_TNS=${CM_TARGET_NAMESPACE}
+CL_SERV_TYPE=${BASE}
+
+source ${SCRIPTS}/cluster-script-preprocess.sh $1
+
 name="${CM_S_NAME}"
 url="${CM_URL}"
 
@@ -70,6 +76,39 @@ spec:
           ingress:
             class: nginx
 EOF
+
+[ -z "${ROUTE53_ACCESS_KEY}" ] || {
+
+  cat > "${CL_DIR}/${NAME}/issuer-production-dns.yaml" <<EOF
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: ${SSL_PROD_ISSUER}-dns
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: ${SSL_EMAIL}
+    privateKeySecretRef:
+      name: ${SSL_PROD_ISSUER}-dns
+    solvers:
+      - dns01:
+          route53:
+            region: us-east-1
+            accessKeyID: ${ROUTE53_ACCESS_KEY}
+            secretAccessKeySecretRef:
+              name: route53-secret
+              key: secret-access-key
+EOF
+
+  SEALED_SECRETS_PUB_KEY="pub-sealed-secrets-${CLUSTER_NAME}.pem"
+  kubectl create secret generic "route53-secret" \
+        --namespace "${CM_TARGET_NAMESPACE}" \
+      --from-literal=secret-access-key="${ROUTE53_SECRET_KEY}" \
+      --dry-run=client -o yaml | kubeseal --cert="${SEALED_SECRETS_PUB_KEY}" \
+      --format=yaml > "${CL_DIR}/${NAME}/route53-secret.yaml"
+  kubectl apply -f "${CL_DIR}/${NAME}/route53-secret.yaml"
+
+}
 
 update_kustomization ${CL_DIR}/${NAME}
 

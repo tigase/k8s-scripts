@@ -74,7 +74,7 @@ kubectl patch storageclass oci -p '{"metadata": {"annotations":{"storageclass.be
 
 if [ ! -z "${LH_S3_BACKUP_ACCESS_KEY}" ]; then
   kubectl create secret generic "aws-s3-backup" \
-        --namespace "longhorn-system" \
+        --namespace "${LH_TARGET_NAMESPACE}" \
     	--from-literal=AWS_ACCESS_KEY_ID="${LH_S3_BACKUP_ACCESS_KEY}" \
     	--from-literal=AWS_SECRET_ACCESS_KEY="${LH_S3_BACKUP_SECRET_KEY}" \
     	--dry-run=client -o yaml | kubeseal --cert="${SEALED_SECRETS_PUB_KEY}" \
