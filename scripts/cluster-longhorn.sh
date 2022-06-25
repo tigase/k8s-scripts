@@ -12,26 +12,36 @@ source `dirname "$0"`/scripts-env-init.sh
 
 cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "No cluster repo dir!"; exit 1; }
 
+CL_SERV_NAME=${LH_NAME}
+CL_SERV_TNS=${LH_TARGET_NAMESPACE}
+CL_SERV_TYPE=${BASE}
+
+source ${SCRIPTS}/cluster-script-preprocess.sh $1
+
 name="${LH_S_NAME}"
 url="${LH_URL}"
 
 echo "      ${BOLD}Adding ${name} source at ${url}${NORMAL}"
-${SCRIPTS}/flux-create-source.sh ${name} ${url}
-update_repo "${LH_NAME}"
-wait_for_ready 5
+${SCRIPTS}/flux-create-source.sh ${name} ${url} && {
+  update_repo "${LH_NAME}"
+  wait_for_ready 5
+}
 
 NAME="${LH_NAME}"
 TNS=${LH_TARGET_NAMESPACE}
 SEALED_SECRETS_PUB_KEY="pub-sealed-secrets-${CLUSTER_NAME}.pem"
-USER_NAME=`gen_token 8`
-USER_PASS=`gen_token 24`
+u_name=""
+u_pass=""
 
 [[ "$1" == "-q" ]] || {
-  echo -n "Provide Longhorn user name: "; read u_name
-  echo -n "Provide Longhorn user password: "; read u_pass
-  [[ -z ${u_name} ]] || USER_NAME=${u_name}
-  [[ -z ${u_pass} ]] || USER_PASS=${u_pass}
+  echo -n "Provide Longhorn user name or ENTER to generate: "; read u_name
+  echo -n "Provide Longhorn user password or ENTER to generate: "; read u_pass
 }
+[[ -z "${u_name}" ]] && u_name=`gen_token 8`
+USER_NAME=${u_name}
+[[ -z "${u_pass}" ]] && u_pass=`gen_token 24`
+USER_PASS=${u_pass}
+
 update_k8s_secrets "longhorn-user" ${USER_NAME}
 update_k8s_secrets "longhorn-pass" ${USER_PASS}
 
@@ -115,8 +125,8 @@ spec:
               number: 80
 EOF
 
-echo "You can access LH UI using 'kubectl proxy --port 8001' and then open link in your browser:"
-echo "http://localhost:8001/api/v1/namespaces/longhorn-system/services/http:longhorn-frontend:80/proxy/"
+echo -e "\n${BOLD}You can access LH UI using 'kubectl proxy --port 8001' and then open link in your browser:${NORMAL}"
+echo -e "${BOLD}http://localhost:8001/api/v1/namespaces/longhorn-system/services/http:longhorn-frontend:80/proxy/${NORMAL}\n"
 
 update_kustomization "${CL_DIR}/${NAME}"
 

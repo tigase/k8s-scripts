@@ -1,4 +1,6 @@
     defaultSettings:
       defaultReplicaCount: 3
       defaultDataLocality: "best-effort"
+      backupTarget: ""
+      backupTargetCredentialSecret: "aws-s3-backup"
 

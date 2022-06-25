@@ -23,6 +23,9 @@ DIR="${BASE_DIR}/sources"
 }
 
 FILE="${DIR}/"${NAME}".yaml"
+
+[[ -f "${FILE}" ]] && exit 1
+
 flux create source helm ${NAME} \
   --url=${URL} \
   --interval=${INTERVAL} \

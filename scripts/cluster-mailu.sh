@@ -41,12 +41,22 @@ fi
 
 if [ -z "${MAILU_ADMIN_USERNAME}" ]; then
   echo -n "Provide admin username: "; read u_key;
-  echo -n "Provide admin domain: "; read d_key;
-  echo -n "Provide admin password: "; read p_key;
   [[ -z ${u_key} ]] || MAILU_ADMIN_USERNAME=${u_key}
-  [[ -z ${d_key} ]] || MAILU_ADMIN_DOMAIN=${d_key}
-  [[ -z ${p_key} ]] || MAILU_ADMIN_PASSWORD=${p_key}
 fi
+
+if [ -z "${MAILU_ADMIN_DOMAIN}" ]; then
+  echo -n "Provide admin domain: "; read d_key;
+  [[ -z ${d_key} ]] || MAILU_ADMIN_DOMAIN=${d_key}
+fi
+
+if [ -z "${MAILU_ADMIN_PASSWORD}" ]; then
+  echo -n "Provide admin password or ENTER to generate: "; read p_key;
+  [[ -z ${p_key} ]] && p_key=`gen_token 24`
+  MAILU_ADMIN_PASSWORD=${p_key}
+fi
+
+update_k8s_secrets "mailu_admin_user" "${MAILU_ADMIN_USERNAME}@${MAILU_ADMIN_DOMAIN}"
+update_k8s_secrets "mailu_admin_pass" "${MAILU_ADMIN_PASSWORD}"
 
 if [ -z "${MAILU_SUBNET}" ]; then
   echo -n "Provide subnet from which to allow to accept connections: "; read s_key;
@@ -107,7 +117,12 @@ fi
 
 echo "      ${BOLD}Adding Mailu helm chart${NORMAL}"
 
-${SCRIPTS}/flux-create-source.sh ${MAILU_S_NAME} ${MAILU_URL}
+${SCRIPTS}/flux-create-source.sh ${MAILU_S_NAME} ${MAILU_URL} && {
+  [ "$1" == "--no-commit" ] || [ "$2" == "--no-commit" ] || {
+    update_repo "${MAILU_NAME}"
+    wait_for_ready 5
+  }
+}
 
 update_kustomization ${BASE_DIR}/sources
 
@@ -178,11 +193,18 @@ printf "$VALUES" >> "${CL_DIR}/${NAME}/${NAME}.yaml"
 
   wait_for_ready
 
-  [ -z "${MAILU_AWS_ZONE_ID}" ] || {
-    echo "      ${BOLD}Updating DNS for ${MAILU_HOSTNAMES[0]} and ${MAILU_DOMAIN} ${NORMAL}"
-    HOSTNAME_IP=`kubectl get ingress -n mailu-prod mailu-ingress -o jsonpath='{.status.loadBalancer.ingress[].ip}'`
-    SERVER_IP=`kubectl get svc -n mailu-prod mailu-front-ext -o jsonpath='{.status.loadBalancer.ingress[].ip}'`
-    echo "Setting ${MAILU_HOSTNAMES[0]} -> ${HOSTNAME_IP} and ${MAILU_DOMAIN} -> ${SERVER_IP}"
-    ${SCRIPTS}/aws-update-zone.sh "${MAILU_AWS_ZONE_ID}" "${MAILU_DOMAIN}" "${SERVER_IP}" "${MAILU_HOSTNAMES[0]}" "${HOSTNAME_IP}"
-  }
+    m_domain="${MAILU_DOMAIN}"
+    m_server="${MAILU_HOSTNAMES[0]}"
+    CLUSTER_IP=`kubectl get ingress -n mailu-prod mailu-ingress -o jsonpath='{.status.loadBalancer.ingress[].ip}'`
+    MAILU_IP=`kubectl get svc -n mailu-prod mailu-front-ext -o jsonpath='{.status.loadBalancer.ingress[].ip}'`
+
+  if [ -z "${MAILU_AWS_ZONE_ID}" ]; then
+    echo "      ${BOLD}Updating DNS for ${INFO}${m_domain}${NORMAL} and ${INFO}${m_server}${NORMAL}"
+    echo "      ${BOLD}Pointing ${INFO}${INFO}${m_domain}${NORMAL} -> ${INFO}${CLUSTER_IP}${NORMAL} and ${m_server}${NORMAL} -> ${INFO}${MAILU_IP}${NORMAL}"
+    ${SCRIPTS}/aws-update-zone.sh "${MAILU_AWS_ZONE_ID}" "${m_server}" "${MAILU_IP}" "${m_domain}" "${CLUSTER_IP}"
+  else
+    echo "      ${WARNING}Cannot automatically update DNS for domain and host. Make necessary adjustments:${NORMAL}"
+    echo "      ${BOLD}Point ${INFO}${m_domain}${NORMAL} -> ${INFO}${CLUSTER_IP}${NORMAL} and ${m_server}${NORMAL} -> ${INFO}${MAILU_IP}${NORMAL}"
+  fi
 }
+

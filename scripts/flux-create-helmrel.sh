@@ -80,9 +80,9 @@ CMD="flux create helmrelease ${NAME} \
 	--namespace=${NAMESPACE}
 	--target-namespace=${TARGET_NAMESPACE} $*"
 echo -e "${CMD}\n" >> $TMP_DIR/flux-cmds.txt
-set -x
+#set -x
 ${CMD} --export > ${FILE}
-set +x
+#set +x
 
 echo "Update service kustomization"
 cd ${DIR}

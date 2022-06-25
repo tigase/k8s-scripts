@@ -8,6 +8,12 @@ source `dirname "$0"`/scripts-env-init.sh
 
 cd ${CLUSTER_REPO_DIR} &> /dev/null || { echo "${ERROR}No cluster repo dir!${NORMAL}"; exit 1; }
 
+CL_SERV_NAME=${DA_NAME}
+CL_SERV_TNS=${DA_TARGET_NAMESPACE}
+CL_SERV_TYPE=${BASE}
+
+source ${SCRIPTS}/cluster-script-preprocess.sh $1
+
 name="${DA_S_NAME}"
 url="${DA_URL}"
 
@@ -56,6 +62,7 @@ ${SCRIPTS}/flux-create-helmrel.sh \
         "${DA_VALUES}" --create-target-namespace || exit 1
 
 update_chart_ns "${CL_DIR}/${NAME}/${NAME}.yaml"
+yq e -i ".spec.chart.spec.chart = \"${DA_S_NAME}\"" "${CL_DIR}/${NAME}/${NAME}.yaml"
 
 update_repo ${NAME}
 

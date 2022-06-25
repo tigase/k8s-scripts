@@ -18,9 +18,10 @@ name="${CM_S_NAME}"
 url="${CM_URL}"
 
 echo "      ${BOLD}Adding ${name} source at ${url}${NORMAL}"
-${SCRIPTS}/flux-create-source.sh ${name} ${url}
-update_repo "${CM_NAME}"
-wait_for_ready 5
+${SCRIPTS}/flux-create-source.sh ${name} ${url} && {
+  update_repo "${CM_NAME}"
+  wait_for_ready 5
+}
 
 NAME="${CM_NAME}"
 TNS="${CM_TARGET_NAMESPACE}"
