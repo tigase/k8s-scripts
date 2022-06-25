@@ -31,6 +31,12 @@
   }
 
   cl_serv_remove() {
+    echo "${ERROR}    WARNING!!${NORMAL}"
+    echo "${ERROR}    You are about to remove ${CL_SERV_NAME} from your k8s cluster.${NORMAL}"
+    echo "${ERROR}    This application will no longer be available.${NORMAL}"
+    echo "${ERROR}    All the application data will be lost and cannot be restored unless there is backup.${NORMAL}"
+    echo "To proceed press ${INFO}ENTER${NORMAL} to stop press ${ERROR}Ctrl-c${NORMAL}"
+    read
     cl_serv_update
     update_kustomization  ${CL_DIR%${CL_SERV_TNS}}
     echo "    ${INFO}Removing: ${BASE_DIR}/sources/${CL_SERV_NAME}.yaml${NORMAL}"
