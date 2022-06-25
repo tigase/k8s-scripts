@@ -1,0 +1,14 @@
+    vhost: "${COTURN_DOMAIN}"
+    
+    secret:
+      username: "${COTURN_USERNAME}"
+      password: "${COTURN_PASSWORD}"
+      
+    hostNetwork: true
+    
+    service:
+      enabled: false
+      
+    ports:
+      from: "${COTURN_LPORT}"
+      to: "${COTURN_UPORT}"
