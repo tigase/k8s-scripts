@@ -7,11 +7,22 @@
 # waits until flux system fully reconcilled after each service is added
 #
 
+[ -z ${K8S_CONTEXT} ] && {
+  echo "K8S_CONTEXT not set."
+  echo "You have to set K8S_CONTEXT environment to your k8s context:"
+  echo "kubectl config get-contexts"
+  echo "Then set your context name as the variable value:"
+  echo "export K8S_CONTEXT=context-name"
+  exit 1
+}
+
 if [ -z "$TIG_CLUSTER_HOME" ]; then
 	export CONFIG="$HOME/.tigase-flux"
 else 
 	export CONFIG="$TIG_CLUSTER_HOME"
 fi
+
+export CONFIG="${CONFIG}/${K8S_CONTEXT}"
 
 if [ ! -d "$CONFIG" ]; then
 	echo "Config directory $CONFIG does not exist!";
@@ -32,13 +43,6 @@ fi
 
 source "${CONFIG}/envs/cluster.env" || { echo "No cluster.env file"; exit 1; }
 
-[ -z ${K8S_CONTEXT} ] && {
-  echo "K8S_CONTEXT not set."
-  echo "Update your cluster.env file and set K8S_CONTEXT to your k8s context:"
-  echo "kubectl config get-contexts"
-  echo "Then copy your context name as the variable value"
-  exit 1
-}
 kubectl config use-context ${K8S_CONTEXT}
 
 if [ "$COLORED_OUTPUT" = true ]; then
