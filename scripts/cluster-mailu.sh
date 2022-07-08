@@ -40,8 +40,9 @@ if [ -z "${MAILU_HOSTNAMES}" ]; then
 fi
 
 if [ -z "${MAILU_ADMIN_USERNAME}" ]; then
-  echo -n "Provide admin username: "; read u_key;
-  [[ -z ${u_key} ]] || MAILU_ADMIN_USERNAME=${u_key}
+  echo -n "Provide admin username or ENTER to generate: "; read u_key;
+  [[ -z ${u_key} ]] && u_key=`gen_token 12`
+  MAILU_ADMIN_USERNAME=${u_key}
 fi
 
 if [ -z "${MAILU_ADMIN_DOMAIN}" ]; then
@@ -198,13 +199,22 @@ printf "$VALUES" >> "${CL_DIR}/${NAME}/${NAME}.yaml"
     CLUSTER_IP=`kubectl get ingress -n mailu-prod mailu-ingress -o jsonpath='{.status.loadBalancer.ingress[].ip}'`
     MAILU_IP=`kubectl get svc -n mailu-prod mailu-front-ext -o jsonpath='{.status.loadBalancer.ingress[].ip}'`
 
-  if [ -z "${MAILU_AWS_ZONE_ID}" ]; then
-    echo "      ${BOLD}Updating DNS for ${INFO}${m_domain}${NORMAL} and ${INFO}${m_server}${NORMAL}"
-    echo "      ${BOLD}Pointing ${INFO}${INFO}${m_domain}${NORMAL} -> ${INFO}${CLUSTER_IP}${NORMAL} and ${m_server}${NORMAL} -> ${INFO}${MAILU_IP}${NORMAL}"
-    ${SCRIPTS}/aws-update-zone.sh "${MAILU_AWS_ZONE_ID}" "${m_server}" "${MAILU_IP}" "${m_domain}" "${CLUSTER_IP}"
+  if [ -n "${MAILU_DOMAIN_AWS_ZONE_ID}" ]; then
+    echo "      ${BOLD}Updating DNS for ${INFO}${m_domain}${NORMAL}"
+    echo "      ${BOLD}Pointing ${INFO}${m_domain}${NORMAL} -> ${INFO}${CLUSTER_IP}${NORMAL}"
+    ${SCRIPTS}/aws-update-zone.sh "${MAILU_DOMAIN_AWS_ZONE_ID}" "${m_domain}" "${CLUSTER_IP}" "${AWS_PROFILE}"
   else
     echo "      ${WARNING}Cannot automatically update DNS for domain and host. Make necessary adjustments:${NORMAL}"
-    echo "      ${BOLD}Point ${INFO}${m_domain}${NORMAL} -> ${INFO}${CLUSTER_IP}${NORMAL} and ${m_server}${NORMAL} -> ${INFO}${MAILU_IP}${NORMAL}"
+    echo "      ${BOLD}Point ${INFO}${m_domain}${NORMAL} -> ${INFO}${CLUSTER_IP}${NORMAL}"
+  fi
+
+  if [ -n "${MAILU_HOSTNAME_AWS_ZONE_ID}" ]; then
+    echo "      ${BOLD}Updating DNS for ${INFO}${m_server}${NORMAL}"
+    echo "      ${BOLD}Pointing ${INFO}${m_server}${NORMAL} -> ${INFO}${MAILU_IP}${NORMAL}"
+    ${SCRIPTS}/aws-update-zone.sh "${MAILU_HOSTNAME_AWS_ZONE_ID}" "${m_server}" "${MAILU_IP}" "${AWS_PROFILE}"
+  else
+    echo "      ${WARNING}Cannot automatically update DNS for domain and host. Make necessary adjustments:${NORMAL}"
+    echo "      ${BOLD}Point ${INFO}${m_server}${NORMAL} -> ${INFO}${MAILU_IP}${NORMAL}"
   fi
 }
 
