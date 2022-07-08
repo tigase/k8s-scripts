@@ -43,6 +43,13 @@ fi
 
 source "${CONFIG}/envs/cluster.env" || { echo "No cluster.env file"; exit 1; }
 
+if [ "${K8S_CONTEXT}" != "${K8S_CLUSTER_CONTEXT}" ]; then
+  echo "Cluster k8s context does not match your environment k8s context."
+  echo "Make sure you have K8S_CLUSTER_CONTEXT property set to a correct value in cluster.env file"
+  exit 1
+fi
+
+
 kubectl config use-context ${K8S_CONTEXT}
 
 if [ "$COLORED_OUTPUT" = true ]; then
