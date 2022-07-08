@@ -6,7 +6,7 @@
       single_pvc: false
     certmanager:
       enabled: true
-      issuerName: letsencrypt
+      issuerName: letsencrypt-dns
       apiVersion: "cert-manager.io/v1"
     front:
       controller:
