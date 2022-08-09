@@ -62,7 +62,7 @@
       single_pvc: false
     clamav:
       persistence:
-        size: 2Gi
+        size: 5Gi
       resources:
         requests:
           cpu: 80m
