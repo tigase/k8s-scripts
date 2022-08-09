@@ -1,3 +1,6 @@
+    certmanager:
+      enabled: false
+
     onedev:  
       service:
         type: ClusterIP
