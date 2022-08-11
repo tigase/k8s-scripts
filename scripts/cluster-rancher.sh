@@ -25,9 +25,14 @@ TNS=${RANCHER_TARGET_NAMESPACE}
 
 CL_DIR=`mkdir_ns ${APPS_DIR} ${TNS} ${FLUX_NS}`
 
-echo $CL_DIR $APPS_DIR $TNS $FLUX_NS
-
 NAME="${RANCHER_NAME}"
+
+cat > "${CL_DIR}/${TNS}.yaml" << EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ${TNS}
+EOF
 
 mkdir -p "${CL_DIR}/${NAME}"
 
