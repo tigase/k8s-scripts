@@ -60,7 +60,7 @@ spec:
       tls:
         source: letsEncrypt
     letsEncrypt:
-      email: "${CM_S_NAME}"
+      email: "${SSL_EMAIL}"
       ingress:
         class: nginx
     bootstrapPassword: "${RANCHER_PASSWORD}"
