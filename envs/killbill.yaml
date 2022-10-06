@@ -1,0 +1,28 @@
+    replicaCount: 1
+    
+    database:
+      host: '${KILLBILL_DATABASE_HOST}'
+      existingSecret: 'mysql-credentials'
+        
+    ingress:
+      enabled: true
+      hosts:
+        - host: '${KILLBILL_DOMAIN}'
+          paths:
+            - path: /
+              pathType: Prefix
+              serviceType: 'killbill'
+        - host: '${KAUI_DOMAIN}'
+          paths:
+            - path: /
+              pathType: Prefix
+              serviceType: 'kaui'
+      certificateIssuer: ${SSL_ISSUER}
+      tls:
+        hosts:
+          - '${KILLBILL_DOMAIN}'
+          - '${KAUI_DOMAIN}'
+    
+    resources:
+      limits:
+        memory: 1Gi
