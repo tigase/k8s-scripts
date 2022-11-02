@@ -29,6 +29,7 @@ flux bootstrap github \
   --personal
 
 [[ "$1" == "--update" ]] && {
+  flux reconcile source git flux-system
   echo "FluxCD on the cluster updated"
   exit 0
 }
