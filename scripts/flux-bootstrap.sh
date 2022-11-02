@@ -6,14 +6,18 @@
 
 source `dirname "$0"`/scripts-env-init.sh
 
-[[ -d ${CLUSTER_REPO_DIR} ]] && {
+MODE="FluxCD installation"
+
+[[ "$1" == "--update" ]] && MODE="FluxCD update"
+
+[[ "$1" != "--update" ]] && [[ -d ${CLUSTER_REPO_DIR} ]] && {
   echo "${ERROR}Local folder the cluster repository already exist: ${CLUSTER_REPO_DIR}${NORMAL}"
   echo "${ERROR}Cleanup first and then rerun the script${NORMAL}"
   exit 1
 }
 
 flux check
-echo "    ${INFO}Press ENTER if everything looks correct, Ctrl-C to stop${NORMAL}"
+echo -e "    ${INFO}${MODE}\nPress ENTER if everything looks correct, Ctrl-C to stop${NORMAL}"
 read abc
 
 flux bootstrap github \
@@ -23,6 +27,11 @@ flux bootstrap github \
   --path=./clusters/$CLUSTER_NAME \
   --token-auth \
   --personal
+
+[[ "$1" == "--update" ]] && {
+  echo "FluxCD on the cluster updated"
+  exit 0
+}
 
 if [ ! -d  "$PROJECTS_DIR" ]; then
   mkdir "$PROJECTS_DIR"
