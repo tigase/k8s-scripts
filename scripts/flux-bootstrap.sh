@@ -26,7 +26,8 @@ flux bootstrap github \
   --branch=$REPO_BRANCH \
   --path=./clusters/$CLUSTER_NAME \
   --token-auth \
-  --personal
+  --personal \
+  --components-extra=image-reflector-controller,image-automation-controller
 
 [[ "$1" == "--update" ]] && {
   flux reconcile source git flux-system
