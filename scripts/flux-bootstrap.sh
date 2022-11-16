@@ -27,6 +27,7 @@ flux bootstrap github \
   --path=./clusters/$CLUSTER_NAME \
   --token-auth \
   --personal \
+  --read-write-key \
   --components-extra=image-reflector-controller,image-automation-controller
 
 [[ "$1" == "--update" ]] && {
